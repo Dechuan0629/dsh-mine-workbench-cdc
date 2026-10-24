@@ -54,11 +54,11 @@ plugin_manager install_bundle target=/absolute/path/to/dsh-mine-workbench
 
 安装或更新 Client bundle 后，**完全退出 DSH 再打开**（macOS 用 `Cmd+Q`，确认 Dock/菜单栏进程已退出），不要只刷新旧页面或只重载窗口。旧页面的 boot graph 仍指向旧 revision，刷新可能得到 404；重启后 DSH 会用新的 boot graph 加载 `client.js`。
 
-如果插件管理器已显示 `1.1.4`，但 M 仍是**白底圆角方块 + 右上蓝点**或背景仍纯白，说明运行中的页面还是旧 Client。请依次检查：
+如果插件管理器已显示 `1.1.5`，但 M 仍是**白底圆角方块 + 右上蓝点**或背景仍纯白，说明运行中的页面还是旧 Client。请依次检查：
 
 1. 插件列表里是否还残留 `@local/dsh-mine-workbench` 或旧 bundle；有就删除，只保留 `dsh-mine-workbench`。
 2. `Cmd+Q` 完全退出，再重新打开 DSH。
-3. 打开开发者工具 Console（`Cmd+Option+I`），应看到 `[DSH·Mine] client build 1.1.4`；看不到就仍是旧 Client。
+3. 打开开发者工具 Console（`Cmd+Option+I`），应看到 `[DSH·Mine] client build 1.1.5`；看不到就仍是旧 Client。
 
 重启后：
 
@@ -139,10 +139,11 @@ npm run check
 
 ## 迁移交接
 
-如果要把本项目交给另一个 AI 继续维护，请先阅读 [HANDOFF.md](HANDOFF.md)：其中包含 macOS 实测结论、1.1.4 的修复记录、精确安装步骤、诊断树和验收清单。
+如果要把本项目交给另一个 AI 继续维护，请先阅读 [HANDOFF.md](HANDOFF.md)：其中包含 macOS / Windows 实测结论、1.1.5 的修复记录、精确安装步骤、诊断树和验收清单。
 
 ## 版本记录
 
+- **1.1.5**：修复 Windows 上收起侧边栏后 M 完全消失的问题。Windows 标题栏模式下 DSH 原生侧边栏不渲染 `railMark`，而 1.1.3/1.1.4 又隐藏了原生 `panelIcon` 与 CSS 文本 M，收起态按钮内没有任何字形；1.1.5 改为在收起按钮自身用 SVG `background-image` 绘制石墨 M（深色主题自动用浅色 M），不再依赖平台相关的原生节点，macOS / Windows 表现一致。**安装后请 Cmd+Q 完全退出再打开**。
 - **1.1.4**：把画布黑白灰渐变的对比度提高到设计稿水平，修复 1.1.3 已加载但对话窗口看起来仍近乎纯白的问题：浅色画布改为 `#fbfbfc → #c3c8d1` 对角线渐变（弱化左上白色高光），深色画布改为 `#232329 → #0a0a0d`，macOS 原生壳回退同步更新。**安装后仍需 Cmd+Q 完全退出再打开**。
 - **1.1.3**：修复 1.1.2 在 macOS 上实测发现的缺陷：收起态 M 去掉玻璃方块与伪元素文本 M，改为透明底 + 真实 SVG 石墨 M，并隐藏原生 `DesktopUpdateBadge` 蓝点；macOS 会话视图的原生白色容器改为透明，让黑白灰渐变画布真正可见；暗色画布选择器改为 DSH 真实的 `body[data-ds-dark-theme]`；macOS 原生「打开侧边栏」按钮不再套白玻璃皮肤。**安装后仍需 Cmd+Q 完全退出再打开**。
 - **1.1.2**：M 改为纯几何填充字形，移除渐变玻璃底与右上蓝点；macOS 原生壳增加不依赖轮盘运行时的黑白灰画布回退，并直接为原生展开按钮套用圆角玻璃皮肤。（该版本在部分 Mac 上仍显示白底玻璃 M/纯白背景，已由 1.1.3 修复。）

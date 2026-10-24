@@ -2342,6 +2342,10 @@ html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sid
   border-radius: 50% !important;
   color: var(--dsw-alias-label-primary) !important;
   background: transparent !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%230f1115' d='M16 46V18h7l9 11.5L41 18h7v28h-6.2V29.4L32 41.6 22.2 29.4V46Z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 46px 46px !important;
   box-shadow: none !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
@@ -2358,7 +2362,7 @@ html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sid
 }
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"]:hover {
   transform: scale(1.045);
-  background: color-mix(in srgb, var(--dsw-specific-sidebar-fill) 58%, transparent) !important;
+  background-color: color-mix(in srgb, var(--dsw-specific-sidebar-fill) 58%, transparent) !important;
   box-shadow: 0 10px 30px color-mix(in srgb, var(--dsw-alias-label-primary) 14%, transparent) !important;
   -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
   backdrop-filter: blur(18px) saturate(140%) !important;
@@ -2371,14 +2375,15 @@ html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sid
   display: none !important;
 }
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] [class*="railMark"] {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: none !important;
 }
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] .mw-mark {
   display: block !important;
   width: 46px !important;
   height: 46px !important;
+}
+html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] body[data-ds-dark-theme] [data-pane="sidebar"] button[class*="toggle"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23f2f2f4' d='M16 46V18h7l9 11.5L41 18h7v28h-6.2V29.4L32 41.6 22.2 29.4V46Z'/%3E%3C/svg%3E") !important;
 }
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] [data-slot="sidebar.toggle.badge"],
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] [class*="badge"] {
@@ -4144,8 +4149,8 @@ html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="Open side
 
       prefs = loadPrefs();
       try {
-        document.documentElement.dataset.mwBuild = '1.1.4';
-        console.info('[DSH·Mine] client build 1.1.4');
+        document.documentElement.dataset.mwBuild = '1.1.5';
+        console.info('[DSH·Mine] client build 1.1.5');
       } catch {}
 
       ctx.effect(() => {
