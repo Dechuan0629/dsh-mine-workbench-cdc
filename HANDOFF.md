@@ -2,12 +2,12 @@
 
 > 这是一份给下一个 AI 的完整交接文档。你不需要旧会话；按本文的路径、命令、诊断树和验收标准继续。
 >
-> 项目：DSH·Mine 私享工作台（DSH 插件 bundle）  
-> 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc  
-> 当前版本：**1.1.2**  
-> 1.1.2 代码 commit：`4ac76efd667ba7384821daad57806f8eb14aee28`  
-> 当前 `main`：最新文档提交（包含本 HANDOFF 与 README 链接，以 `git log` 为准）  
-> 当前 tag：`v1.1.2`（annotated tag object `75087ca3f7ab146ffc272fca8db1b71c0a4199b4`，指向 `4ac76ef`）  
+> 项目：DSH·Mine 私享工作台（DSH 插件 bundle）
+> 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc
+> 当前版本：**1.1.2**
+> 1.1.2 代码 commit：`4ac76efd667ba7384821daad57806f8eb14aee28`
+> 当前 `main`：最新文档提交（包含本 HANDOFF 与 README 链接，以 `git log` 为准）
+> 当前 tag：`v1.1.2`（annotated tag object `75087ca3f7ab146ffc272fca8db1b71c0a4199b4`，指向 `4ac76ef`）
 > 最后更新：2026-10-24
 
 ---
@@ -52,6 +52,95 @@
 > 我确认已经重装了，卸载了旧版，安装新版，并且显示版本1.1.1，但是问题一点没有得到修复
 
 之后已推送 1.1.2，但用户尚未确认 1.1.2 的效果。
+
+### 1A. 这个插件最初为什么开发、它到底在做什么
+
+> 这一节是后来补写的“开发史”。如果只读故障排查章节，很容易把本项目误解成“一个修不好的侧栏皮肤”；实际上它是从个人工作台需求长出来的一整套 DSH 界面改造。
+
+#### 1A.1 起点：把 DSH 变成“自己的”工作台
+
+这个项目不是先有“插件”再有需求，而是反过来的。
+
+用户日常在 DSH 里工作，但不满足于默认的聊天壳：希望打开 DSH 时先看到一个**属于自己的工作台**，而不是一个通用聊天窗口。最初的目标可以概括为四句话：
+
+1. **有品牌感**：替换默认品牌标识，做出“DSH·Mine / 私享工作台”的识别度；
+2. **有驾驶舱**：首页能继续最近会话、进入工作区、看到今日 Tokens/消费、任务统计和快捷入口；
+3. **有 macOS 质感**：黑白灰、液态玻璃、克制的分隔与阴影，而不是蓝紫渐变或厚重边框；
+4. **有自己的 Agent 人格**：默认中文、重验证、简洁但完整，并把这套人格固化成一个 Agent preset。
+
+因此第一版的重心是“**品牌 + 驾驶舱 + 设置 + 预设**”，不是侧边栏本身。
+
+#### 1A.2 第一版做了什么
+
+第一版是本地插件 `@local/dsh-mine-workbench`，包含：
+
+- 自定义 `Mark` / `BrandName`，占用 `sidebar.brand.mark` 与 `sidebar.brand.name`；
+- `conversation.hero.brand.mark`，让新会话首页也出现品牌；
+- 一个 key 为 `mine-workbench` 的 **主面板**（驾驶舱），从 DSH 的 sessions/workspaces 快照和任务、用量接口取数；
+- 一个 **设置 section**，可改显示名、标语、今日焦点、最近会话/概览开关，支持恢复默认；
+- 一个 bundle patch，在安装插件的同时插入 `DSH·Mine 私享` Agent preset；
+- 一份可复用的玻璃卡片 CSS。
+
+这一版验证了 DSH Client 插件的关键机制：**slot 注册、locale、prefs、标准 props、bundle patch、Agent preset**。后面的所有改造都建立在这套机制上。
+
+#### 1A.3 第二阶段：侧边栏被彻底重做
+
+品牌和驾驶舱完成后，用户把注意力转向侧边栏，连续提出了三类问题：
+
+1. Windows 上展开/收起按钮和品牌图标重叠，收起后按钮消失；
+2. 蓝紫渐变不符合黑白灰审美；
+3. 希望侧边栏本身就像 macOS，收起后不是一条窄栏，而是一个**可拖动的 M 轮盘**；悬停 M 展开，移出收回；每个菜单项都有玻璃 hover。
+
+这阶段做了几件影响源码结构的大事：
+
+- 不替换原生侧边栏 DOM，而是**装饰原生 DOM**：保留原生按钮、菜单、快捷键、`aria-label` 和事件，避免“重写一遍菜单”导致功能丢失；
+- 用 `data-mine-sidebar`、`data-mine-sidebar-collapsed`、`data-mw-wheel-open` 等属性驱动 CSS；
+- 用 `installWheelSidebar()` 监听原生 DOM，把 panel 按钮重新排成轮盘；
+- 用 `transform` + rAF 实现拖动，避免逐帧写全局 CSS 变量；
+- 增加动作坞、命令搜索、实时任务 badge、25 分钟专注、light/dark；
+- 修复原生 Tooltip 在 M 下方留下的白色条。
+
+所以现在的 `client.js` 同时包含“**React 面板**”和“**原生 DOM 侧栏引擎**”两套东西，这是历史演进的结果，不是架构混乱。
+
+#### 1A.4 第三阶段：从个人插件变成可分发 bundle
+
+用户在 MacBook 上也要用，于是项目从 `@local/...` 改名为公开包 `dsh-mine-workbench`，补 README、LICENSE、截图、图标、安装说明，推送到 GitHub。这个阶段的核心不再是 UI，而是：
+
+- bundle 必须能被 `plugin_manager install_bundle` 安装；
+- `package.json` 的 `dsh.bundle.patch`、`dsh.client`、`exports`、`files` 必须自洽；
+- Client 模块 id 必须与包名一致；
+- 安装后必须完整退出 App，避免旧 boot graph 继续请求已失效的 `client.js?rev=...`；
+- Mac 的原生侧栏结构与 Windows 不同，需要单独适配。
+
+这也是为什么交接文档会把“版本号 ≠ 运行时 Client”放在最前面：**可分发之后，最常见的问题不是代码写错，而是页面还在跑旧 bundle。**
+
+#### 1A.5 它现在具体解决什么问题
+
+对用户而言：
+
+- 打开 DSH 先看到个人驾驶舱，而不是空白聊天；
+- 左侧是黑白灰玻璃侧栏，收起后是一个可拖动的 M；
+- 悬停 M 出现轮盘，快速进入任务看板、工作台、插件、自动化任务、插件市场；
+- 轮盘下方有动作坞、今日 Tokens/消费、任务 badge、专注计时；
+- 命令面板可以搜索会话、工作区、面板和动作；
+- 设置里可以改品牌名/标语/焦点和概览开关；
+- 新建会话默认使用 `DSH·Mine 私享` preset。
+
+对 DSH 而言：
+
+- 它是一个标准的 **bundle**：Host 行 + Client 模块 + Agent preset；
+- 不修改 DSH 安装目录，不依赖私有 API 补丁；
+- 不引入第三方运行时依赖，Client 只 `require('react')`；
+- 数据优先走 DSH 已有服务/同源 HTTP，偏好只写浏览器 localStorage。
+
+#### 1A.6 它不是什么
+
+- 不是 DSH 内核补丁，不需要改 `app.asar`；
+- 不是独立 App，不能脱离 DSH 运行；
+- 不是只有 CSS 的皮肤包：它有 React 面板、slot 注册、Host bundle 行和 Agent preset；
+- 不是“重写整个 DSH 侧边栏”：原生菜单和事件仍然是宿主提供的，插件只是在上面做视觉与交互层。
+
+理解这一点，才能理解后面的源码导读：**先看 DSH 的 bundle/Client 生命周期，再看 `client.js` 的两层结构，最后才看某个 CSS 选择器。**
 
 ---
 
@@ -298,6 +387,273 @@ dsh-mine-workbench-cdc/
 - 今日 Tokens / 消费指标，任务状态 badge；
 - 专属设置 section；
 - `DSH·Mine 私享` Agent 预设。
+
+---
+
+## 5A. 源码导读：下一个 AI 应该怎样理解这个项目
+
+> 这一章是后来补写的。目标不是把 4300 行 `client.js` 逐行解释一遍，而是让接手者先建立**正确的运行时模型**，再知道每一层代码在哪里、为什么这样写、改哪里安全。
+
+### 5A.1 先建立四层模型（否则一定会改错地方）
+
+DSH 插件不是“一个 JS 文件”，而是四层协作：
+
+```text
+① package.json 的 dsh 字段
+   ├─ dsh.bundle.patch  → cordis.patch.yml
+   │    ├─ Host 行：mine-workbench → dsh-mine-workbench（index.js）
+   │    └─ Preset 行：preset-mine-workbench → @deepseek-ai/dsh-agent-preset
+   └─ dsh.client        → client.js（Web Client 模块）
+                              ↓
+② Host Loader 读取 bundle patch，注册 Host 行和 preset
+                              ↓
+③ DSH Web 启动时，clientModules 根据 boot graph 提供 client.js
+                              ↓
+④ 浏览器执行 window.__ModuleLoader__.load(...) → apply(ctx)
+   → 注册 locale / style / slots / sidebar engine
+```
+
+四个关键结论：
+
+1. **`index.js` 为空不代表插件没生效。** Host 行只是让 bundle 可被 loader/plugin_manager 识别；本项目的 UI 全部在 Client 模块。
+2. **`package.json` 的版本不是页面运行时版本。** 页面只认 boot graph 里的 `client.js?rev=...`；重装后不完整退出，页面仍可能执行旧 rev。
+3. **slot 是 Client 层的扩展点。** `sidebar.brand.mark`、`sidebar.panellist`、`main`、`settings.section` 都在 `apply(ctx)` 里注册，不是在 Host 里。
+4. **Agent preset 与 UI 是两条独立链路。** 即使 Client 没加载，preset 也可能已经出现在 Agent 选择器里；不要用“preset 能看到”推断 Client 已加载。
+
+### 5A.2 文件职责
+
+| 文件 | 职责 | 改它时最常犯的错 |
+|---|---|---|
+| `package.json` | 包名、版本、`dsh.bundle.patch`、`dsh.client.platform/immediately/inject`、`exports/files` | 改了 `name` 却忘了同步 `client.js` 的 module id；删了 `inject` 导致 slot 服务不可用 |
+| `cordis.patch.yml` | 插入 Host 行 + `DSH·Mine 私享` preset；preset 内复制标准工具组合 | 删平台条件行；把 `preset` 的 `id` 和 bundle 行 `id` 混为一谈 |
+| `index.js` | Host 半侧空实现，只负责被 loader 识别 | 以为它是入口，把 UI 逻辑写进来 |
+| `client.js` | 全部 UI：React 组件、CSS、slot 注册、侧栏/轮盘引擎 | 改到旧的 `installSidebarLayer`；在错误的 CSS 层覆盖；忘记 build 标记 |
+| `locale/zh.json` / `en.json` | 插件市场/包的元信息；真正 UI 词典在 `client.js` 内 | 以为改这里能改界面文案 |
+| `icon.svg` | 包图标，中性石墨色 | 重新引入品牌蓝 |
+| `docs/*.png` | README/交接文档截图 | 截图与当前版本不一致 |
+| `README.md` | 用户安装/功能说明 | 把内部诊断写进用户文档 |
+| `HANDOFF.md` | 给下一个 AI 的工程交接 | 只写故障，不写源码地图（本版已修） |
+
+### 5A.3 `client.js` 分层索引
+
+> 行号基于 1.1.2（4300 行）；编辑后会移动，优先用表中的 `grep` 锚点。
+
+| 行区间 | 内容 | 关键符号 / 锚点 |
+|---|---|---|
+| 1–18 | 模块加载器头 | `window.__ModuleLoader__.load({ id: 'dsh-mine-workbench'` |
+| 23–31 | React 与常量 | `NS`、`PANEL_ID`、`PRESET_ID`、`STORAGE_KEY`、`DEFAULT_NAME` |
+| 33–238 | 中英词典 | `const zh = {`、`const en = {` |
+| 239–354 | 基础工具 | `uiLocale`、`clean`、`clip`、`toMillis`、`basename`、`greetingKey`、`formatDate`、`formatRelative`、`formatNumber`、`formatCompact`、`formatMoney` |
+| 355–420 | 偏好存储 | `normalizePrefs`、`loadPrefs`、`persistPrefs`、`emitPrefs`、`updatePrefs`、`resetPrefs`、`subscribePrefs`、`getPrefsSnapshot`、`usePrefs` |
+| 421–480 | 时间/JSON hooks | `useNow`、`useJson` |
+| 481–620 | DSH 数据归一化 | `rowsFromSessions`、`itemsFromWorkspaces`、`archivedSessionSet`、`normalizeWorkspaces`、`workspaceMap`、`normalizeSessions`、`currentSession`、`summarizeTasks`、`summarizeUsage` |
+| 621–734 | 图标与品牌 | `iconProps`、`ArrowIcon`、`PlusIcon`、`ChatIcon`、`FolderIcon`、`SearchIcon`、`BoardIcon`、`CalendarIcon`、`PlugIcon`、`SparkIcon`、`CheckIcon`、`Mark`、`PanelIcon` |
+| 735–756 | 基础 UI | `GlassCard`、`Button`、`EmptyState` |
+| 757–971 | 驾驶舱组件 | `BrandName`、`RecentSessions`、`WorkspaceCard`、`FocusCard`、`OverviewCard`、`QuickAccess` |
+| 972–1141 | 命令面板 | `CommandPalette`、模块级 `commandBus` |
+| 1142–1310 | 主面板 | `WorkbenchPanel` |
+| 1311–1422 | 设置 | `SettingsPanel`、`ToggleRow` |
+| 1423–2976 | 全量 CSS 字符串 | `const CSS = \`` 到反引号结束 |
+| 2977–3362 | **旧版**侧栏实现 | `installSidebarLayer()`；当前 `apply` 不调用，只作历史参考 |
+| 3363–4124 | **当前**侧栏/轮盘引擎 | `installWheelSidebar(ctx, actions)` |
+| 4125–4294 | Client 入口 | `apply(ctx)` |
+| 4295–4300 | 导出 | `return { inject: [...], apply }` |
+
+#### `client.js` 内部的三条边界
+
+1. **React 组件层（约 621–1422）**
+   只负责渲染，不直接操作原生侧栏 DOM；数据通过 `props` 和标准 hooks 注入。
+   `WorkbenchPanel` 拿到的是 `main` slot 的标准 props：`actions`、`useSessions`、`useWorkspaces`，不是全局单例。
+
+2. **CSS 层（1423–2976）**
+   一个巨大的模板字符串，按注释分段；所有类名以 `mw-` 前缀，选择器尽量挂在 `html[data-mine-sidebar]` / `[data-pane="sidebar"]` 下。
+   **不要在 CSS 里写模块级变量**；这里没有 `${}` 插值，避免构建时被误解析。
+
+3. **原生 DOM 引擎（3363–4124）**
+   这是最容易误改的部分。它不创建 React 树，而是：
+   - 找到 `[data-pane="sidebar"]`；
+   - 给原生按钮加 `data-mw-wheel-item` / label / 位置 CSS 变量；
+   - 用属性驱动 CSS 收起/展开；
+   - 监听 pointer/resize/mutation；
+   - 管理拖动、位置持久化、指标卡、动作坞、badge、专注计时。
+
+> **重要：`installSidebarLayer()`（2977）是旧实现，`apply()` 在 4225 行的 `ctx.effect` 里调用的是 `installWheelSidebar()`（3363）。**
+> 读代码/改 bug 时先 `grep -n "installWheelSidebar"`，不要改错那份。
+
+### 5A.4 运行时数据流
+
+```text
+DSH 标准 props / services
+  ├─ useSessions(snapshot)      → 最近会话、当前会话、归档过滤
+  ├─ useWorkspaces(snapshot)    → 工作区卡片、项目列表
+  ├─ actions.startSession()     → uiWorkspace.startSession(..., { agentPreset: 'mine-workbench' })
+  ├─ actions.openSession()      → uiWorkspace.openSession()
+  ├─ actions.openWorkspace()    → uiWorkspace.openWorkspace(..., { agentPreset })
+  ├─ actions.addWorkspace()     → ui.pickDirectory() → workspaces.create() → openWorkspace()
+  ├─ actions.openPanel(id)      → layout.selectPanel(id)
+  ├─ theme service              → ctx.get('theme').setTheme('light'|'dark')
+  └─ 同源 HTTP
+       ├─ GET /api/dsh-usage/overview   → 今日 Tokens / 消费
+       └─ GET /api/task-board/state     → 任务 badge 统计
+```
+
+偏好数据：
+
+```text
+localStorage['dshMineWorkbench.prefs.v1']
+  → loadPrefs / normalizePrefs
+  → module-level snapshot
+  → usePrefs() = useSyncExternalStore(subscribePrefs, getPrefsSnapshot)
+  → SettingsPanel 修改 → updatePrefs → emitPrefs → React 重渲染
+```
+
+轮盘位置：
+
+```text
+localStorage['dshMineWorkbench.wheelPos.v1']
+  → readWheelPos() → clampWheel() → CSS 变量 --mw-wheel-cx/--mw-wheel-cy
+  → 拖动结束 → snapWheel() → persistWheelPos()
+```
+
+命令面板：
+
+```text
+动作坞搜索按钮 / sidebar panel
+  → commandBus.request()
+  → WorkbenchPanel 的 commandOpen state
+  → CommandPalette
+  → 搜索 sessions / workspaces / DOM panel buttons / 动作
+```
+
+### 5A.5 侧栏/轮盘状态机（读这段再看 CSS）
+
+#### DOM 状态属性
+
+| 属性 | 含义 |
+|---|---|
+| `html[data-mine-sidebar="on"]` | 插件已接管侧栏样式 |
+| `html[data-mine-sidebar-collapsed="true"]` | 当前是收起态 |
+| `html[data-mw-wheel-open="true"]` | 轮盘展开（M 悬停/聚焦） |
+| `html[data-mw-wheel-idle="true"]` | 闲置淡化 |
+| `html.mw-wheel-dragging` | 正在拖动 M |
+| `--mw-wheel-cx/--mw-wheel-cy` | M/轮盘中心位置 |
+| `--mw-x/--mw-y` | 每个轮盘项相对中心的偏移 |
+
+#### 收起态
+
+- 原生侧栏被隐藏/变窄；
+- 只显示 M（`button[class*="toggle"]` 被样式化成圆形玻璃按钮）；
+- M 的 label/tooltip 被移除或 CSS 抑制；
+- 轮盘项 `[data-mw-wheel-item]` 默认 `opacity: 0`、缩回中心；
+- `data-mw-wheel-open=true` 时按 `--mw-x/--mw-y` 展开；
+- `data-mw-wheel-open=false` 时反向过渡。
+
+#### 展开触发
+
+- `pointermove` 进入 M → `openWheel()`；
+- 指针离开轮盘/指标/动作坞安全区 → `scheduleClose()`；
+- 展开后 `decorate()` 从原生 panel 按钮生成轮盘项；
+- `sync()` 在 mutation/resize 后重新计算，但要避免死循环。
+
+#### 拖动
+
+```text
+pointerdown on M (data-mw-drag-handle="hub")
+  → startDrag(event)
+  → rAF 合并 pointermove
+  → 只设置 M 的 translate3d（不逐帧改全局 CSS 变量）
+  → pointerup → clamp → snapWheel → applyWheelPos → persistWheelPos
+  → 若移动超过阈值，抑制随后的 click
+```
+
+拖动期间应隐藏 halo/metrics/dock，避免白条和重绘；这是 1.1.2 之后修过的点。
+
+#### 指标/动作坞/专注
+
+- `ensureChrome()` 创建 `.mw-wheel-halo`、`.mw-wheel-metrics`、`.mw-action-dock`；
+- metrics 每 60s 拉 usage；
+- `loadTaskBadge()` 每 30s 拉 task board，失败静默；
+- `paintFocus()` 从 localStorage 恢复 25 分钟计时；
+- 动作坞按钮：新对话、最近会话、项目、搜索、主题、专注；
+- 所有定时器、监听器在 cleanup 中释放。
+
+### 5A.6 CSS 分层
+
+`CSS` 不是按“组件”组织，而是按**覆盖层次**组织。定位时按下面顺序找：
+
+| 行号锚点 | 层 | 作用 |
+|---|---|---|
+| 1423+ | 根/驾驶舱 | `.mw-root`、`.mw-glass`、hero、卡片、响应式 |
+| 1979 | 侧栏玻璃表面 | `.mw-sidebar-surface`、logoRow、newSession、panelRow |
+| 2129 | 固定定位修正 | 让 fixed 后代相对 viewport 解析 |
+| 2480 | 拖动重绘约束 | 限制拖动时的影响面 |
+| 2509 | 轮盘基础 | halo、wheel items、M、label |
+| 2539 | 关闭态 | `data-mw-wheel-open=false` 的隐藏/缩回 |
+| 2570 | 原生 newSession | 收起态补 `+` 图标 |
+| 2607/2610 | Tooltip 抑制 | `[role="tooltip"]` / `[class*="tooltip"]` |
+| 2641 | 动作坞 | dock、按钮、hover label |
+| 2716 | badge | 任务计数/运行点 |
+| 2748 | 专注 | metrics 内倒计时行 |
+| 2768 | 命令面板 | overlay/panel/item |
+| 2878 | 全局画布 | `html[data-mine-sidebar="on"] body` 黑白灰渐变 + noise |
+| 2904 | Mac 原生回退 | `html[data-platform="darwin"]` 下的侧栏背景/边框 |
+
+**为什么有 `!important`：** 宿主 sidebar 的 CSS 是 hash 类名且优先级高；插件只能通过属性选择器 + `!important` 稳定覆盖。不要为了“干净”批量删 `!important`，会直接退回原生样式。
+
+**为什么有 Mac 回退：** macOS Desktop 的侧栏在收起后可能整个从布局中消失，`[data-pane="sidebar"]` 可能不可见；所以全局画布规则不能依赖侧栏节点存在，必须挂在 `<html>` 的 `data-mine-sidebar` / `data-platform` 上。
+
+### 5A.7 修改指南（按改动类型）
+
+| 想改什么 | 改哪里 | 不要做什么 |
+|---|---|---|
+| 品牌 M 字形/颜色 | `Mark`（约 692） | 不要只改 CSS `::before`；Mac 收起态可能显示的是 slot Mark |
+| 驾驶舱布局 | `WorkbenchPanel` + 1423 段 CSS | 不要直接读全局 `window` 状态；用 props/hooks |
+| 设置项 | `DEFAULT_PREFS`、`SettingsPanel`、`normalizePrefs` | 不要绕过 `updatePrefs` 直接写 localStorage |
+| 侧栏玻璃/菜单 | 1979 段 CSS | 不要改原生 DOM 结构/删除原生按钮 |
+| M 轮盘行为 | `installWheelSidebar`（3363–4124） | 不要改 `installSidebarLayer`（旧实现） |
+| 轮盘项数量/顺序 | `decorate()` / `visible` 逻辑 | 不要硬编码第 5 个按钮一定是某个面板 |
+| 主题 | `ctx.get('theme')` + CSS token | 不要直接改 `document.body.style` |
+| Agent preset | `cordis.patch.yml` | 不要删平台条件、不要漏 `id` |
+| 安装/版本 | `package.json` + `client.js` build 标记 | 不要让 module id 与包名不一致 |
+
+### 5A.8 推荐阅读顺序（约 60–90 分钟）
+
+1. 读本文件 §1A、§2、§3，知道“为什么”和“现在卡在哪”；
+2. 读 `package.json` + `cordis.patch.yml`，理解 bundle/preset；
+3. 读 `client.js` 1–31、4125–4300，理解加载器、`apply`、slot 注册；
+4. 读 1142–1422，理解 React 面板与设置如何拿数据；
+5. 读 3363–3548，理解侧栏引擎的初始化、位置、开合；
+6. 读 3548–3895，理解 chrome/metrics/dock/badge/focus/decorate；
+7. 读 3896–4124，理解拖动、pointer、resize、cleanup；
+8. 最后按需读 CSS 对应段，不要从头到尾读 1500 行 CSS。
+
+### 5A.9 最小调试入口
+
+在 Mac 的 DevTools Console：
+
+```js
+// 1. 运行时是否真的是 1.1.2
+document.documentElement.dataset.mwBuild
+// 期望 "1.1.2"
+
+// 2. 插件是否接管了侧栏
+document.documentElement.dataset.mineSidebar
+document.documentElement.dataset.mineSidebarCollapsed
+document.documentElement.dataset.mwWheelOpen
+
+// 3. 侧栏节点是否存在
+document.querySelector('[data-pane="sidebar"]')?.outerHTML.slice(0, 300)
+
+// 4. M 是 slot Mark 还是 toggle 伪元素
+document.querySelector('[data-pane="sidebar"] button[class*="toggle"]')?.outerHTML
+
+// 5. 全局画布规则是否命中
+getComputedStyle(document.body).backgroundImage
+```
+
+如果 `data-mw-build` 不是 1.1.2，先解决“旧 Client 仍在运行”，不要改 CSS。
+如果 build 正确但 `data-mine-sidebar` 缺失，查 `installWheelSidebar` 是否在 `apply` 后抛错。
+如果属性都有但背景仍白，查 `body` 是否被更深的 `#root`/wrapper 盖住（见 §7 情况 C）。
 
 ---
 
@@ -593,6 +949,8 @@ Host 半侧是空实现，仅用于 plugin_manager 识别 bundle；UI 全部在 
 
 ### `client.js`
 
+> 完整的模块分层、行号索引、数据流和状态机见 **§5A 源码导读**。这里只保留入口摘要。
+
 入口：
 
 ```js
@@ -610,9 +968,11 @@ window.__ModuleLoader__.load({
 
 - locale 注册；
 - 注入 `<style data-mine-workbench-style>`；
+- 设置 build 标记 `document.documentElement.dataset.mwBuild = '1.1.2'` 并打印 `[DSH·Mine] client build 1.1.2`；
 - 定义 actions；
 - `ctx.effect(() => installWheelSidebar(ctx, actions), ...)`；
-- 注册 `sidebar.brand.mark` / `sidebar.brand.name` / `conversation.hero.brand.mark` / `sidebar.panellist` / `main` / `settings.section`。
+- 注册 `sidebar.brand.mark` / `sidebar.brand.name`（`priority: -1`，覆盖原生品牌）/ `conversation.hero.brand.mark` / `sidebar.panellist` / `main` / `settings.section`；
+- 每个 slot 先尝试 `ctx.slots.register`，失败则 `ctx.slots.inject` 等待声明后注册（boot 初期 slot 可能尚未声明）。
 
 ---
 
