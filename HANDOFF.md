@@ -5,7 +5,8 @@
 > 项目：DSH·Mine 私享工作台（DSH 插件 bundle）
 > 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc
 > 当前版本：**1.1.3**（2026-10-24 修复 macOS 收起 M 与画布渐变；待 Mac 验收）
-> 1.1.3 代码 commit / tag：`v1.1.3`（哈希以 `git rev-parse v1.1.3` 为准；本地已提交，GitHub 推送待凭据）
+> 1.1.3 代码 commit：`7c1a6ebc2ebb4deed181c9f7a0f3602f0a49479b`
+> 当前 tag：`v1.1.3`（annotated tag object `e0d9f45f5ad80f8c3b8a3fcd14a396ef31f7e002`，指向 `7c1a6eb`；GitHub 推送待用户凭据）
 > 上一版 1.1.2：commit `4ac76efd667ba7384821daad57806f8eb14aee28`，tag `v1.1.2`
 > 当前 `main`：最新提交（以 `git log` 为准）
 > 最后更新：2026-10-24
@@ -151,7 +152,7 @@
 ```text
 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc
 分支：main
-当前版本：1.1.3（本地已提交并打 tag；GitHub 推送待用户凭据）
+当前版本：1.1.3（commit 7c1a6eb，tag v1.1.3；GitHub 推送待用户凭据）
 上一版：v1.1.2 -> 4ac76ef（commit 4ac76efd667ba7384821daad57806f8eb14aee28）
 当前 tag：v1.1.3（哈希以 `git rev-parse v1.1.3` 为准）
 ```
