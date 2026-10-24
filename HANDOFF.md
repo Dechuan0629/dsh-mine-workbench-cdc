@@ -4,9 +4,10 @@
 >
 > 项目：DSH·Mine 私享工作台（DSH 插件 bundle）
 > 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc
-> 当前版本：**1.1.4**（2026-10-25 提高画布渐变对比度，让黑白灰画布真正可见；待 Mac 验收）
-> 1.1.4 代码 commit：`4da9f1afe7ac0245760ff904c0bfbb130632f2a6`
-> 当前 tag：`v1.1.4`（annotated tag object `0fcdf4103363d374fc9c4c82b25ac5a0865655ee`，指向 `4da9f1a`）
+> 当前版本：**1.1.5**（2026-10-25 修复 Windows 收起侧边栏后 M 消失；macOS/Windows 共用同一绘制方式）
+> 1.1.5 代码 commit：`007e530b8b1ada5e0606db0ab54e4d651d5aea8a`
+> 当前 tag：`v1.1.5`（annotated tag object `d3b21e2525e2151aacd1506f167f6f1b82a29e0b`，指向 `007e530`）
+> 上一版 1.1.4：commit `4da9f1afe7ac0245760ff904c0bfbb130632f2a6`，tag `v1.1.4`（tag object `0fcdf4103363d374fc9c4c82b25ac5a0865655ee`）
 > 上一版 1.1.3：commit `7c1a6ebc2ebb4deed181c9f7a0f3602f0a49479b`，tag `v1.1.3`（tag object `e0d9f45f5ad80f8c3b8a3fcd14a396ef31f7e002`）
 > 上一版 1.1.2：commit `4ac76efd667ba7384821daad57806f8eb14aee28`，tag `v1.1.2`
 > 当前 `main`：最新提交（以 `git log` 为准）
@@ -28,12 +29,14 @@
 
 **2026-10-25 实测更新（1.1.4）：** 1.1.3 在 Mac 上确认已加载（Console 有 `client build 1.1.3`），但用户反馈「整个对话窗口依然不是渐变的」。对真实 Electron 窗口截图做像素采样：conversation 区横向 `#f3f3f5 → #ededef`、纵向 `#f1f1f3 → #ecebee`（Δ≈7–11/255），肉眼近乎纯灰白；对照 `docs/workbench-light.png` 的设计背景（`#fafafb → #ccced3`）判定为**渐变对比度不足**，不是遮挡层问题。1.1.4 已提高 light/dark 画布渐变对比度（见 §4.5）。
 
+**2026-10-25 实测更新（1.1.5）：** Windows 上收起侧边栏后 M 完全消失。根因是 Windows 标题栏模式下 DSH 原生侧边栏**不渲染 `railMark`**，而 1.1.3/1.1.4 又隐藏了原生 `panelIcon` 并删除了 CSS 文本 M，收起态按钮内没有任何字形；1.1.5 改为在收起按钮自身用 SVG `background-image` 绘制石墨 M，不再依赖平台相关的原生节点（见 §4.6）。
+
 你的任务不是再重复“请重启”，而是：
 
 1. 先让用户确认当前页面到底加载了哪个 Client（Console 标记 / 蓝点 / 版本）；
 2. 如果仍是旧 Client，彻底清理旧 bundle 并 `Cmd+Q` 完全退出；
-3. 如果已经是 1.1.4 但 UI 仍错，按第 7 节的诊断树定位是「Mark 没进 slot」「CSS 被覆盖」「Mac 原生壳不透明」还是「pane 不存在」；
-4. 1.1.4 已完成修复、提交、推送并从 GitHub 安装到 profile；1.1.3 的收起 M、蓝点、暗色问题已在上版解决，本轮只解决画布渐变对比度；下一步是 Mac 重启截图验收。
+3. 如果已经是 1.1.5 但 UI 仍错，按第 7 节的诊断树定位是「Mark 没进 slot」「CSS 被覆盖」「原生壳不透明」还是「pane 不存在」；
+4. 1.1.5 已完成修复、提交、推送并从 GitHub 安装到 profile；1.1.3 解决收起 M/蓝点/暗色，1.1.4 提高画布渐变对比度，1.1.5 修复 Windows 收起 M 消失；下一步是 Windows 用户更新后确认。
 
 不要假设 Windows 上的效果等于 macOS；不要只改 CSS 就宣布完成。
 
@@ -155,9 +158,9 @@
 ```text
 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc
 分支：main
-当前版本：1.1.4（commit 4da9f1a，tag v1.1.4）
+当前版本：1.1.5（commit 007e530，tag v1.1.5）
 上一版：v1.1.2 -> 4ac76ef（commit 4ac76efd667ba7384821daad57806f8eb14aee28）
-当前 tag：v1.1.4（哈希以 `git rev-parse v1.1.4` 为准）
+当前 tag：v1.1.5（哈希以 `git rev-parse v1.1.5` 为准）
 ```
 
 精确加载发布代码：
@@ -165,9 +168,9 @@
 ```bash
 git clone https://github.com/Dechuan0629/dsh-mine-workbench-cdc.git
 cd dsh-mine-workbench-cdc
-git checkout v1.1.4
+git checkout v1.1.5
 git rev-parse HEAD
-# 以 v1.1.4 tag 为准（对应 1.1.4 修复提交）
+# 以 v1.1.5 tag 为准（对应 1.1.5 修复提交）
 ```
 
 如果要读取本交接文档的最新版本，使用 `main`：
@@ -202,7 +205,7 @@ git rev-parse HEAD
 ```json
 {
   "name": "dsh-mine-workbench",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "private": false,
   "license": "MIT",
   "type": "module",
@@ -332,7 +335,7 @@ html[data-platform="darwin"] button[aria-label*="边栏"]:not([data-mw-drag-hand
 
 ```js
 document.documentElement.dataset.mwBuild = '1.1.4';
-console.info('[DSH·Mine] client build 1.1.4');
+console.info('[DSH·Mine] client build 1.1.5');
 ```
 
 如果 Console 没有这行，**100% 是旧 Client 或模块没加载**，不要继续调 CSS。
@@ -363,7 +366,7 @@ console.info('[DSH·Mine] client build 1.1.4');
 
 ---
 
-### 4.5 1.1.4（当前版本）：画布渐变对比度
+### 4.5 1.1.4（上一版）：画布渐变对比度
 
 **用户反馈（2026-10-25 00:02，重启后）**：1.1.3 已加载（Console 有 `client build 1.1.3`），但「整个对话窗口依然不是渐变的」。
 
@@ -375,6 +378,18 @@ console.info('[DSH·Mine] client build 1.1.4');
 - 构建标记 → `1.1.4`（`dataset.mwBuild` 与 Console）。
 
 **验证状态**：无头 CDP 对从 GitHub 安装的 1.1.4 boot graph 实测：light 右中 `#d5dae0`、右下 `#caced7`（1.1.3 时约 `#f0f0f2`），dark 同结构可见；卡片/文字对比度保持。待 Mac Cmd+Q 重启后做最终视觉验收。
+
+### 4.6 1.1.5（当前版本）：Windows 收起侧边栏 M 消失
+
+**用户反馈（2026-10-25，Windows 机器）：**「安装后缩小侧边栏后，整个 M 都消失不见了。」
+
+**根因（native 源码 `@deepseek-ai/dsh-client-ui-sidebar` 的 SidebarRoot JSX）：** 收起态 toggle 的 children 是
+`[!wide && !windowsTitlebar && <span class="_3WPZCG_railMark">renderSlot("sidebar.brand.mark", {size:24})</span>, <IconPanelLeftOutlineRegular className="_3WPZCG_panelIcon" />, !wide && renderSlot("sidebar.toggle.badge")]`。
+Windows 标题栏模式（`data-windows-titlebar`）下原生**不渲染 railMark**；而 1.1.3/1.1.4 的收起态 CSS 隐藏 `panelIcon`、并删除了 1.1.2 的 `::before content:'M'`，于是 toggle 内没有任何字形 → M 消失。macOS 因为 railMark 存在所以正常。
+
+**1.1.5 修改（`client.js`）：** 不再依赖原生 railMark。收起态 toggle 自身用 `background-image` 绘制 SVG 石墨 M（浅色主题 `#0f1115`；深色主题 `body[data-ds-dark-theme]` 下 `#f2f2f4`，`background-size: 46px 46px`、居中、不重复），同时隐藏 `railMark` / `panelIcon` / badge，保留 54×54 圆形按钮、hover 玻璃与拖拽；hover 从 `background` 改为 `background-color`，避免把 M 的背景图重置掉。
+
+**验证状态：** 无头 Chrome + CDP（1.1.4 boot graph + 注入本修复）分别用 `data-platform="darwin"` 与 `win32` + `data-windows-titlebar` 模拟收起态截图：两种形态 hub 中心都出现石墨 M；Windows 下 Canvas 仍为原生白色壳（DSH Windows 原生 frame/centerCol 不透明，本轮未改动其背景）。待 Windows 用户更新到 1.1.5 后确认。
 
 ## 5. 项目结构
 
@@ -418,7 +433,7 @@ dsh-mine-workbench-cdc/
 - 轮盘：`installWheelSidebar(ctx, actions)`
 - 状态同步：`const sync = () =>`
 - 入口：`function apply(ctx)`
-- 构建标记：`client build 1.1.4`
+- 构建标记：`client build 1.1.5`
 
 ### 主要 UI 能力
 
@@ -676,9 +691,9 @@ pointerdown on M (data-mw-drag-handle="hub")
 在 Mac 的 DevTools Console：
 
 ```js
-// 1. 运行时是否真的是 1.1.4
+// 1. 运行时是否真的是 1.1.5
 document.documentElement.dataset.mwBuild
-// 期望 "1.1.4"
+// 期望 "1.1.5"
 
 // 2. 插件是否接管了侧栏
 document.documentElement.dataset.mineSidebar
@@ -695,7 +710,7 @@ document.querySelector('[data-pane="sidebar"] button[class*="toggle"]')?.outerHT
 getComputedStyle(document.body).backgroundImage
 ```
 
-如果 `data-mw-build` 不是 1.1.4，先解决“旧 Client 仍在运行”，不要改 CSS。
+如果 `data-mw-build` 不是 1.1.5，先解决“旧 Client 仍在运行”，不要改 CSS。
 如果 build 正确但 `data-mine-sidebar` 缺失，查 `installWheelSidebar` 是否在 `apply` 后抛错。
 如果属性都有但背景仍白，查 `body` 是否被更深的 `#root`/wrapper 盖住（见 §7 情况 C）。
 
@@ -708,7 +723,7 @@ getComputedStyle(document.body).backgroundImage
 ```bash
 git clone https://github.com/Dechuan0629/dsh-mine-workbench-cdc.git
 cd dsh-mine-workbench-cdc
-git checkout v1.1.4
+git checkout v1.1.5
 ```
 
 ### 6.2 清理旧 bundle（关键）
@@ -734,7 +749,7 @@ plugin_manager install_bundle target="/Users/<you>/dsh-mine-workbench-cdc"
 安装后应显示：
 
 - bundle：`dsh-mine-workbench`
-- version：`1.1.4`
+- version：`1.1.5`
 
 ### 6.4 完全退出再打开
 
@@ -758,7 +773,7 @@ macOS 上：
 
 ```js
 document.documentElement.dataset.mwBuild
-// "1.1.4"
+// "1.1.5"
 document.documentElement.dataset.mineSidebar
 // "on"
 document.documentElement.dataset.mineSidebarCollapsed
@@ -767,20 +782,20 @@ document.documentElement.dataset.mwWheelOpen
 // "false"（默认收起时）
 ```
 
-如果 `mwBuild` 不是 `1.1.4`，不要再研究 M/CSS；先解决 **旧 Client / 旧 bundle / 未完全重启**。
+如果 `mwBuild` 不是 `1.1.5`，不要再研究 M/CSS；先解决 **旧 Client / 旧 bundle / 未完全重启**。
 
 ---
 
-## 7. 诊断树：如果 1.1.4 仍然不对
+## 7. 诊断树：如果 1.1.5 仍然不对
 
-### 情况 A：Console 没有 `[DSH·Mine] client build 1.1.4`
+### 情况 A：Console 没有 `[DSH·Mine] client build 1.1.5`
 
-优先级最高。说明当前页面没有加载 1.1.4。
+优先级最高。说明当前页面没有加载 1.1.5。
 
 依次检查：
 
 1. 插件列表是否仍有旧 `@local/dsh-mine-workbench`；
-2. 插件管理器显示的 `dsh-mine-workbench` 版本是否真是 1.1.4；
+2. 插件管理器显示的 `dsh-mine-workbench` 版本是否真是 1.1.5；
 3. 是否只重载窗口，没有 `Cmd+Q`；
 4. 在 DSH 插件列表里把 `dsh-mine-workbench` 也删除，重新安装；
 5. 再完全退出、重开。
@@ -793,7 +808,7 @@ document.documentElement.dataset.mwWheelOpen
 
 ### 情况 B：Console 有标记，但 M 仍是白底方块 + 蓝点
 
-这说明 1.1.4 Client 已加载，但 **M 不是我们的 `Mark`**，或 CSS 被覆盖。
+这说明 1.1.5 Client 已加载，但 **M 不是我们的 `Mark`**，或 CSS 被覆盖。
 
 检查 slot 占用：
 
@@ -901,9 +916,9 @@ document.documentElement.dataset.mineSidebarCollapsed
 
 在 Mac 上，只有以下全部通过才算完成：
 
-- [ ] 插件管理器显示 `dsh-mine-workbench` **1.1.4**；
+- [ ] 插件管理器显示 `dsh-mine-workbench` **1.1.5**；
 - [ ] 插件列表没有 `@local/dsh-mine-workbench`；
-- [ ] Console 有 `[DSH·Mine] client build 1.1.4`；
+- [ ] Console 有 `[DSH·Mine] client build 1.1.5`；
 - [ ] 收起 M 是干净的石墨色实心 M，**无白底方块、无蓝点、无字体错乱**；
 - [ ] Mac 顶部条原生「打开侧边栏」按钮不是白玻璃方块（原生 ghost 或石墨 M）；
 - [ ] 悬停收起 M 时出现半透明玻璃底（仍可拖动）；
@@ -1014,7 +1029,7 @@ window.__ModuleLoader__.load({
 
 - locale 注册；
 - 注入 `<style data-mine-workbench-style>`；
-- 设置 build 标记 `document.documentElement.dataset.mwBuild = '1.1.4'` 并打印 `[DSH·Mine] client build 1.1.4`；
+- 设置 build 标记 `document.documentElement.dataset.mwBuild = '1.1.5'` 并打印 `[DSH·Mine] client build 1.1.5`；
 - 定义 actions；
 - `ctx.effect(() => installWheelSidebar(ctx, actions), ...)`；
 - 注册 `sidebar.brand.mark` / `sidebar.brand.name`（`priority: -1`，覆盖原生品牌）/ `conversation.hero.brand.mark` / `sidebar.panellist` / `main` / `settings.section`；
@@ -1037,22 +1052,22 @@ window.__ModuleLoader__.load({
 
 ## 12. 交接后的第一批动作（按顺序）
 
-1. `git clone` / `git pull`，确认当前 tag `v1.1.4`（上一版为 `7c1a6eb` / tag `v1.1.3`）。
+1. `git clone` / `git pull`，确认当前 tag `v1.1.5`（上一版为 `4da9f1a` / tag `v1.1.4`）。
 2. 阅读 `package.json`、`cordis.patch.yml`、`client.js` 的 `Mark` / Mac fallback / `apply`。
-3. 让用户在 Mac 上安装 1.1.4，并 **Cmd+Q 完全退出**。
+3. 让用户在 Mac / Windows 上安装 1.1.5，并 **Cmd+Q 完全退出**。
 4. 让用户提供：
    - M 的截图（重点看蓝点/白底）；
    - Console 中 `[DSH·Mine] client build ...`；
    - 插件列表中所有 `mine-workbench` 条目。
-5. 如果标记是 1.1.4 但视觉仍错，按第 7 节 B/C/D 分支收集 DOM/计算样式，不要盲改。
+5. 如果标记是 1.1.5 但视觉仍错，按第 7 节 B/C/D 分支收集 DOM/计算样式，不要盲改。
 6. 修复后：
    ```bash
    node --check client.js
    git add -A
    git commit -m "fix: ..."
    git push origin main
-   git tag -a v1.1.4 -m "v1.1.4"
-   git push origin v1.1.4
+   git tag -a v1.1.5 -m "v1.1.5"
+   git push origin v1.1.5
    ```
 7. 在 Mac 上重新安装、完全重启、截图验收；通过后再向用户宣布完成。
 
@@ -1060,7 +1075,7 @@ window.__ModuleLoader__.load({
 
 ## 13. 给用户的最短沟通模板
 
-> 本机已实测定位：你的页面确实加载了 1.1.2（Console 有 `[DSH·Mine] client build 1.1.2`），此前“旧 Client 未重启”的判断不成立。问题来自 1.1.2 自身：收起 M 的玻璃底与伪元素文本 M 叠加、原生 DesktopUpdateBadge 蓝点未被隐藏、macOS 原生白色容器遮住画布渐变、暗色选择器写错属性名。这些已在 **1.1.3** 修复；1.1.4 又提高了画布渐变对比度（浅色 `#fbfbfc → #c3c8d1`，深色 `#232329 → #0a0a0d`）。请安装 **1.1.4** 后 **Cmd+Q 完全退出 DSH 再打开**，Console 应看到 `[DSH·Mine] client build 1.1.4`；然后确认：收起 M 是干净石墨 M（无白底方块、无蓝点），light 为明显的黑白灰渐变、dark 为黑灰渐变，顶部条原生展开按钮不再是白玻璃方块。若仍有问题，请把 Console 截图和收起态截图发我。
+> 本机已实测定位：你的页面确实加载了 1.1.2（Console 有 `[DSH·Mine] client build 1.1.2`），此前“旧 Client 未重启”的判断不成立。问题来自 1.1.2 自身：收起 M 的玻璃底与伪元素文本 M 叠加、原生 DesktopUpdateBadge 蓝点未被隐藏、macOS 原生白色容器遮住画布渐变、暗色选择器写错属性名。这些已在 **1.1.3** 修复；1.1.4 提高了画布渐变对比度；**1.1.5 修复 Windows 上收起侧边栏后 M 消失**（Windows 标题栏模式不渲染原生 railMark，现改为在按钮自身绘制 SVG M）。请安装 **1.1.5** 后 **Cmd+Q 完全退出 DSH 再打开**，Console 应看到 `[DSH·Mine] client build 1.1.5`；然后确认：收起 M 是干净石墨 M（无白底方块、无蓝点），light 为明显的黑白灰渐变、dark 为黑灰渐变，顶部条原生展开按钮不再是白玻璃方块。若仍有问题，请把 Console 截图和收起态截图发我。
 
 ---
 
