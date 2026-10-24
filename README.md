@@ -33,7 +33,7 @@
 ### 1. 取得目录
 
 ```bash
-git clone <this-repository-url> dsh-mine-workbench
+git clone https://github.com/Dechuan0629/dsh-mine-workbench-cdc.git dsh-mine-workbench
 ```
 
 如果目标机器没有 Git，也可以在 GitHub 页面选择 **Code → Download ZIP**，解压后得到 `dsh-mine-workbench` 目录。
