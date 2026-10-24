@@ -704,8 +704,8 @@ window.__ModuleLoader__.load({
       }, [
         h('defs', { key: 'defs' }, [
           h('linearGradient', { key: 'g', id: gradientId, x1: '0%', y1: '0%', x2: '100%', y2: '100%' }, [
-            h('stop', { key: 's1', offset: '0%', stopColor: 'currentColor', stopOpacity: '0.18' }),
-            h('stop', { key: 's2', offset: '100%', stopColor: 'var(--dsw-alias-brand-primary)', stopOpacity: '0.30' }),
+            h('stop', { key: 's1', offset: '0%', stopColor: 'currentColor', stopOpacity: '0.16' }),
+            h('stop', { key: 's2', offset: '100%', stopColor: 'currentColor', stopOpacity: '0.05' }),
           ]),
         ]),
         h('rect', {
@@ -733,19 +733,21 @@ window.__ModuleLoader__.load({
         }),
         h('path', {
           key: 'm',
-          d: 'M18 44V21.5L32 34l14-12.5V44',
+          d: 'M17 45V20l15 15 15-15v25',
           stroke: 'currentColor',
-          strokeOpacity: '0.9',
-          strokeWidth: 4,
+          strokeOpacity: '0.92',
+          strokeWidth: 4.5,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
+          shapeRendering: 'geometricPrecision',
         }),
         h('circle', {
           key: 'dot',
-          cx: 46,
-          cy: 18,
-          r: 2.6,
-          fill: 'var(--dsw-alias-brand-primary)',
+          cx: 47,
+          cy: 17,
+          r: 2.3,
+          fill: 'currentColor',
+          opacity: '0.42',
         }),
       ]);
     }
@@ -1985,8 +1987,9 @@ window.__ModuleLoader__.load({
   height: 5px;
   flex: none;
   border-radius: 50%;
-  background: var(--dsw-alias-brand-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dsw-alias-brand-primary) 14%, transparent);
+  background: var(--dsw-alias-label-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dsw-alias-label-primary) 10%, transparent);
+  opacity: .5;
 }
 .mw-mark { display: block; flex: none; filter: drop-shadow(0 6px 14px color-mix(in srgb, var(--dsw-alias-label-primary) 10%, transparent)); }
 .mw-icon { display: block; flex: none; }
@@ -2415,9 +2418,12 @@ html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sid
   align-items: center;
   justify-content: center;
   color: var(--dsw-alias-label-primary);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -.06em;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+  font-size: 19px;
+  font-weight: 650;
+  font-synthesis: none;
+  line-height: 1;
+  letter-spacing: -.045em;
   opacity: 1;
   transition: opacity .16s ease;
 }
@@ -2913,6 +2919,32 @@ html[data-mw-wheel-open="false"] .mw-wheel-badge {
   border-top: 1px solid color-mix(in srgb, var(--dsw-alias-label-primary) 7%, transparent);
   color: var(--dsw-alias-label-tertiary);
   font-size: 9px;
+}
+
+/* Keep the whole workspace on the same graphite canvas as the workbench.
+   DSH paints its own opaque surface on macOS; this restores the shared
+   light/dark gradient instead of a flat white or black page. */
+html[data-mine-sidebar="on"] body {
+  background-color: #f2f2f4 !important;
+  background-image:
+    radial-gradient(1100px 760px at 12% -8%, #ffffff 0%, rgba(255, 255, 255, 0) 58%),
+    radial-gradient(880px 640px at 96% 105%, rgba(255, 255, 255, .72) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(145deg, #fafafa 0%, #f0f0f2 46%, #e6e6e9 100%) !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+}
+html[data-mine-sidebar="on"][data-dsh-theme="dark"] body {
+  background-color: #0b0b0d !important;
+  background-image:
+    radial-gradient(1000px 700px at 15% -10%, rgba(255, 255, 255, .12) 0%, rgba(255, 255, 255, 0) 60%),
+    radial-gradient(850px 600px at 90% 105%, rgba(255, 255, 255, .06) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(145deg, #19191c 0%, #111114 48%, #08080a 100%) !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+}
+html[data-mine-sidebar="on"] #root,
+html[data-mine-sidebar="on"] #root > div {
+  background-color: transparent !important;
 }
 
 @media (max-height: 720px) {
