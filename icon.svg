@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="mineGlass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".32"/>
+      <stop offset=".52" stop-color="#d9d9de" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#5b5b62" stop-opacity=".26"/>
+    </linearGradient>
+    <linearGradient id="mineStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".86"/>
+      <stop offset="1" stop-color="#b8b8c0" stop-opacity=".34"/>
+    </linearGradient>
+    <radialGradient id="mineGlow" cx=".3" cy=".2" r=".9">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="3" y="3" width="58" height="58" rx="17" fill="#151517"/>
+  <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#mineGlass)" stroke="url(#mineStroke)" stroke-width="1.4"/>
+  <rect x="7" y="7" width="50" height="50" rx="14" fill="url(#mineGlow)"/>
+  <path d="M18 44.5V21.5L32 34l14-12.5v23" fill="none" stroke="#f5f5f7" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="46" cy="18" r="2.6" fill="#d9d9de"/>
+</svg>
