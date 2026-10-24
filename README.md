@@ -52,7 +52,13 @@ plugin_manager install_bundle target=/absolute/path/to/dsh-mine-workbench
 
 ### 3. 完全重启 DSH
 
-安装或更新 Client bundle 后，**完全退出 DSH 再打开**，不要只刷新旧页面。旧页面的 boot graph 仍指向旧 revision，刷新可能得到 404；重启后 DSH 会用新的 boot graph 加载 `client.js`。
+安装或更新 Client bundle 后，**完全退出 DSH 再打开**（macOS 用 `Cmd+Q`，确认 Dock/菜单栏进程已退出），不要只刷新旧页面或只重载窗口。旧页面的 boot graph 仍指向旧 revision，刷新可能得到 404；重启后 DSH 会用新的 boot graph 加载 `client.js`。
+
+如果插件管理器已显示 `1.1.2`，但 M 仍是**白底圆角方块 + 右上蓝点**，说明运行中的页面还是旧 Client（1.1.1 已移除蓝点）。请依次检查：
+
+1. 插件列表里是否还残留 `@local/dsh-mine-workbench` 或旧 bundle；有就删除，只保留 `dsh-mine-workbench`。
+2. `Cmd+Q` 完全退出，再重新打开 DSH。
+3. 打开开发者工具 Console（`Cmd+Option+I`），应看到 `[DSH·Mine] client build 1.1.2`；看不到就仍是旧 Client。
 
 重启后：
 
