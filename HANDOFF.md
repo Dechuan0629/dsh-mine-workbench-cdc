@@ -6,7 +6,7 @@
 > 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc  
 > 当前版本：**1.1.2**  
 > 1.1.2 代码 commit：`4ac76efd667ba7384821daad57806f8eb14aee28`  
-> 当前 `main` 文档 tip：`2cf7962`（包含本 HANDOFF 与 README 链接）  
+> 当前 `main`：最新文档提交（包含本 HANDOFF 与 README 链接，以 `git log` 为准）  
 > 当前 tag：`v1.1.2`（annotated tag object `75087ca3f7ab146ffc272fca8db1b71c0a4199b4`，指向 `4ac76ef`）  
 > 最后更新：2026-10-24
 
@@ -61,10 +61,8 @@
 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc
 分支：main
 1.1.2 代码 commit：4ac76efd667ba7384821daad57806f8eb14aee28
-当前 main 文档 tip：2cf7962（HANDOFF + README 链接）
-最近提交：
-  2cf7962 docs: link handoff from readme
-  a9880f4 docs: add migration handoff prompt
+当前 main：最新文档提交（HANDOFF + README 链接，以 `git log` 为准）
+最近提交（代码）：
   4ac76ef docs: explain stale mac client and full quit
   3c1c2f3 fix: make mac M native and canvas independent of wheel runtime
 tag：v1.1.2 -> 4ac76ef
