@@ -2868,20 +2868,20 @@ html[data-mw-wheel-open="false"] .mw-wheel-badge {
    DSH paints its own opaque surface on macOS; this restores the shared
    light/dark gradient instead of a flat white or black page. */
 html[data-mine-sidebar="on"] body {
-  background-color: #f2f2f4 !important;
+  background-color: #d8dbe1 !important;
   background-image:
-    radial-gradient(1100px 760px at 12% -8%, #ffffff 0%, rgba(255, 255, 255, 0) 58%),
-    radial-gradient(880px 640px at 96% 105%, rgba(255, 255, 255, .72) 0%, rgba(255, 255, 255, 0) 62%),
-    linear-gradient(145deg, #fafafa 0%, #f0f0f2 46%, #e6e6e9 100%) !important;
+    radial-gradient(860px 580px at 4% -16%, #ffffff 0%, rgba(255, 255, 255, 0) 48%),
+    radial-gradient(640px 480px at 100% 112%, rgba(255, 255, 255, .18) 0%, rgba(255, 255, 255, 0) 58%),
+    linear-gradient(135deg, #fbfbfc 0%, #eff1f4 28%, #dde1e6 60%, #c3c8d1 100%) !important;
   background-attachment: fixed !important;
   background-repeat: no-repeat !important;
 }
 html[data-mine-sidebar="on"] body[data-ds-dark-theme] {
-  background-color: #0b0b0d !important;
+  background-color: #0b0b0e !important;
   background-image:
-    radial-gradient(1000px 700px at 15% -10%, rgba(255, 255, 255, .12) 0%, rgba(255, 255, 255, 0) 60%),
-    radial-gradient(850px 600px at 90% 105%, rgba(255, 255, 255, .06) 0%, rgba(255, 255, 255, 0) 62%),
-    linear-gradient(145deg, #19191c 0%, #111114 48%, #08080a 100%) !important;
+    radial-gradient(900px 620px at 12% -10%, rgba(255, 255, 255, .14) 0%, rgba(255, 255, 255, 0) 58%),
+    radial-gradient(760px 560px at 92% 108%, rgba(255, 255, 255, .06) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(135deg, #232329 0%, #15151a 46%, #0a0a0d 100%) !important;
   background-attachment: fixed !important;
   background-repeat: no-repeat !important;
 }
@@ -2895,21 +2895,21 @@ html[data-mine-sidebar="on"] #root > div {
    Paint the canvas and the native expand control by platform alone. */
 html[data-platform="darwin"] body,
 html[data-platform="darwin"] #root {
-  background-color: #f2f2f4 !important;
+  background-color: #d8dbe1 !important;
   background-image:
-    radial-gradient(1100px 760px at 12% -8%, #ffffff 0%, rgba(255, 255, 255, 0) 58%),
-    radial-gradient(880px 640px at 96% 105%, rgba(255, 255, 255, .72) 0%, rgba(255, 255, 255, 0) 62%),
-    linear-gradient(145deg, #fafafa 0%, #f0f0f2 46%, #e6e6e9 100%) !important;
+    radial-gradient(860px 580px at 4% -16%, #ffffff 0%, rgba(255, 255, 255, 0) 48%),
+    radial-gradient(640px 480px at 100% 112%, rgba(255, 255, 255, .18) 0%, rgba(255, 255, 255, 0) 58%),
+    linear-gradient(135deg, #fbfbfc 0%, #eff1f4 28%, #dde1e6 60%, #c3c8d1 100%) !important;
   background-attachment: fixed !important;
   background-repeat: no-repeat !important;
 }
 html[data-platform="darwin"] body[data-ds-dark-theme],
 html[data-platform="darwin"] body[data-ds-dark-theme] #root {
-  background-color: #0b0b0d !important;
+  background-color: #0b0b0e !important;
   background-image:
-    radial-gradient(1000px 700px at 15% -10%, rgba(255, 255, 255, .12) 0%, rgba(255, 255, 255, 0) 60%),
-    radial-gradient(850px 600px at 90% 105%, rgba(255, 255, 255, .06) 0%, rgba(255, 255, 255, 0) 62%),
-    linear-gradient(145deg, #19191c 0%, #111114 48%, #08080a 100%) !important;
+    radial-gradient(900px 620px at 12% -10%, rgba(255, 255, 255, .14) 0%, rgba(255, 255, 255, 0) 58%),
+    radial-gradient(760px 560px at 92% 108%, rgba(255, 255, 255, .06) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(135deg, #232329 0%, #15151a 46%, #0a0a0d 100%) !important;
   background-attachment: fixed !important;
   background-repeat: no-repeat !important;
 }
@@ -4144,8 +4144,8 @@ html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="Open side
 
       prefs = loadPrefs();
       try {
-        document.documentElement.dataset.mwBuild = '1.1.3';
-        console.info('[DSH·Mine] client build 1.1.3');
+        document.documentElement.dataset.mwBuild = '1.1.4';
+        console.info('[DSH·Mine] client build 1.1.4');
       } catch {}
 
       ctx.effect(() => {
