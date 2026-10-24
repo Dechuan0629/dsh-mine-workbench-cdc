@@ -2328,6 +2328,8 @@ html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sid
   justify-content: center;
 }
 
+/* Collapsed M hub: a graphite SVG mark floating on the canvas. No glass
+   slab, no CSS text glyph, no native update badge (the blue dot). */
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] {
   position: fixed !important;
   left: calc(var(--mw-wheel-cx, 128px) - 27px) !important;
@@ -2335,58 +2337,52 @@ html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sid
   width: 54px !important;
   height: 54px !important;
   margin: 0 !important;
-  border: 1px solid color-mix(in srgb, var(--dsw-alias-label-primary) 18%, transparent) !important;
+  padding: 0 !important;
+  border: 0 !important;
   border-radius: 50% !important;
   color: var(--dsw-alias-label-primary) !important;
-  background:
-    linear-gradient(145deg, color-mix(in srgb, #fff 44%, transparent), transparent 52%),
-    color-mix(in srgb, var(--dsw-specific-sidebar-fill) 90%, transparent) !important;
-  box-shadow:
-    0 16px 40px color-mix(in srgb, var(--dsw-alias-label-primary) 22%, transparent),
-    inset 0 1px 0 color-mix(in srgb, #fff 68%, transparent) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(155%);
-  backdrop-filter: blur(28px) saturate(155%);
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
   display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   visibility: visible !important;
   opacity: 1 !important;
   pointer-events: auto !important;
   cursor: grab;
   touch-action: none;
   z-index: 94 !important;
-  transition: transform .26s var(--mw-spring), box-shadow .24s var(--mw-ease), background .24s var(--mw-ease);
+  transition: transform .26s var(--mw-spring), background-color .24s var(--mw-ease), box-shadow .24s var(--mw-ease);
 }
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"]:hover {
   transform: scale(1.045);
-  box-shadow:
-    0 20px 48px color-mix(in srgb, var(--dsw-alias-label-primary) 26%, transparent),
-    inset 0 1px 0 color-mix(in srgb, #fff 82%, transparent) !important;
+  background: color-mix(in srgb, var(--dsw-specific-sidebar-fill) 58%, transparent) !important;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--dsw-alias-label-primary) 14%, transparent) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
+  backdrop-filter: blur(18px) saturate(140%) !important;
 }
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] [class*="panelIcon"] {
   display: none !important;
 }
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"]::before {
-  content: 'M';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--dsw-alias-label-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
-  font-size: 19px;
-  font-weight: 650;
-  font-synthesis: none;
-  line-height: 1;
-  letter-spacing: -.045em;
-  opacity: 1;
-  transition: opacity .16s ease;
-}
-html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"]:hover::before {
-  opacity: 1;
-}
-html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"]:hover [class*="panelIcon"] {
+  content: none !important;
   display: none !important;
-  opacity: 0;
+}
+html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] [class*="railMark"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] .mw-mark {
+  display: block !important;
+  width: 46px !important;
+  height: 46px !important;
+}
+html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] [data-slot="sidebar.toggle.badge"],
+html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] [class*="badge"] {
+  display: none !important;
 }
 
 .mw-wheel-halo {
@@ -2617,13 +2613,6 @@ html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [class*="toolti
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
-}
-html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"]::before {
-  opacity: 1 !important;
-  content: 'M';
-}
-html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"]:hover::before {
-  opacity: 1 !important;
 }
 html[data-mine-sidebar="on"][data-mine-sidebar-collapsed="true"] [data-pane="sidebar"] button[class*="toggle"] [class*="panelIcon"] {
   display: none !important;
@@ -2887,7 +2876,7 @@ html[data-mine-sidebar="on"] body {
   background-attachment: fixed !important;
   background-repeat: no-repeat !important;
 }
-html[data-mine-sidebar="on"][data-dsh-theme="dark"] body {
+html[data-mine-sidebar="on"] body[data-ds-dark-theme] {
   background-color: #0b0b0d !important;
   background-image:
     radial-gradient(1000px 700px at 15% -10%, rgba(255, 255, 255, .12) 0%, rgba(255, 255, 255, 0) 60%),
@@ -2914,8 +2903,8 @@ html[data-platform="darwin"] #root {
   background-attachment: fixed !important;
   background-repeat: no-repeat !important;
 }
-html[data-platform="darwin"][data-dsh-theme="dark"] body,
-html[data-platform="darwin"][data-dsh-theme="dark"] #root {
+html[data-platform="darwin"] body[data-ds-dark-theme],
+html[data-platform="darwin"] body[data-ds-dark-theme] #root {
   background-color: #0b0b0d !important;
   background-image:
     radial-gradient(1000px 700px at 15% -10%, rgba(255, 255, 255, .12) 0%, rgba(255, 255, 255, 0) 60%),
@@ -2928,31 +2917,48 @@ html[data-platform="darwin"] #root > div,
 html[data-platform="darwin"] body > div {
   background-color: transparent !important;
 }
-html[data-platform="darwin"] button[aria-label*="边栏"]:not([data-mw-drag-handle]),
-html[data-platform="darwin"] button[aria-label*="sidebar" i]:not([data-mw-drag-handle]) {
-  background: linear-gradient(145deg, rgba(255, 255, 255, .96), rgba(235, 235, 240, .84)) !important;
-  border: 1px solid rgba(255, 255, 255, .72) !important;
-  border-radius: 15px !important;
-  color: #1d1d1f !important;
-  box-shadow:
-    0 10px 26px rgba(15, 23, 42, .13),
-    0 1px 3px rgba(15, 23, 42, .10),
-    inset 0 1px 0 rgba(255, 255, 255, .9) !important;
+html[data-platform="darwin"] [data-pane="conversation"],
+html[data-platform="darwin"] [data-pane="conversation"] [class*="_root"] {
+  background-color: transparent !important;
 }
-html[data-platform="darwin"][data-dsh-theme="dark"] button[aria-label*="边栏"]:not([data-mw-drag-handle]),
-html[data-platform="darwin"][data-dsh-theme="dark"] button[aria-label*="sidebar" i]:not([data-mw-drag-handle]) {
-  background: linear-gradient(145deg, rgba(58, 58, 62, .96), rgba(28, 28, 31, .88)) !important;
-  border-color: rgba(255, 255, 255, .16) !important;
-  color: #f5f5f7 !important;
-  box-shadow:
-    0 12px 30px rgba(0, 0, 0, .38),
-    0 1px 3px rgba(0, 0, 0, .32),
-    inset 0 1px 0 rgba(255, 255, 255, .18) !important;
+/* Native macOS expand control, painted before the wheel runtime exists:
+   keep it a bare graphite mark instead of a white glass slab. Scope to the
+   sidebar pane and the exact "open sidebar" label so unrelated buttons
+   (e.g. "打开右侧边栏") are not restyled. */
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="打开侧边栏"]:not([data-mw-drag-handle]),
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="Open sidebar" i]:not([data-mw-drag-handle]) {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  color: var(--dsw-alias-label-primary, #1d1d1f) !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden;
+  position: relative;
 }
-html[data-platform="darwin"] button[aria-label*="边栏"]:not([data-mw-drag-handle]) [class*="badge"],
-html[data-platform="darwin"] button[aria-label*="边栏"]:not([data-mw-drag-handle]) [data-dsh-badge],
-html[data-platform="darwin"] button[aria-label*="sidebar" i]:not([data-mw-drag-handle]) [class*="badge"] {
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="打开侧边栏"]:not([data-mw-drag-handle]) svg,
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="打开侧边栏"]:not([data-mw-drag-handle]) [class*="panelIcon"],
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="打开侧边栏"]:not([data-mw-drag-handle]) [class*="badge"],
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="打开侧边栏"]:not([data-mw-drag-handle]) [data-slot="sidebar.toggle.badge"],
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="Open sidebar" i]:not([data-mw-drag-handle]) svg,
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="Open sidebar" i]:not([data-mw-drag-handle]) [class*="panelIcon"],
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="Open sidebar" i]:not([data-mw-drag-handle]) [class*="badge"],
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="Open sidebar" i]:not([data-mw-drag-handle]) [data-slot="sidebar.toggle.badge"] {
   display: none !important;
+}
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="打开侧边栏"]:not([data-mw-drag-handle])::before,
+html[data-platform="darwin"] [data-pane="sidebar"] button[aria-label^="Open sidebar" i]:not([data-mw-drag-handle])::before {
+  content: '' !important;
+  display: block !important;
+  width: 46px;
+  height: 46px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M16 46V18h7l9 11.5L41 18h7v28h-6.2V29.4L32 41.6 22.2 29.4V46Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M16 46V18h7l9 11.5L41 18h7v28h-6.2V29.4L32 41.6 22.2 29.4V46Z'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 @media (max-height: 720px) {
@@ -4138,8 +4144,8 @@ html[data-platform="darwin"] button[aria-label*="sidebar" i]:not([data-mw-drag-h
 
       prefs = loadPrefs();
       try {
-        document.documentElement.dataset.mwBuild = '1.1.2';
-        console.info('[DSH·Mine] client build 1.1.2');
+        document.documentElement.dataset.mwBuild = '1.1.3';
+        console.info('[DSH·Mine] client build 1.1.3');
       } catch {}
 
       ctx.effect(() => {

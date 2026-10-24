@@ -4,10 +4,10 @@
 >
 > 项目：DSH·Mine 私享工作台（DSH 插件 bundle）
 > 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc
-> 当前版本：**1.1.2**
-> 1.1.2 代码 commit：`4ac76efd667ba7384821daad57806f8eb14aee28`
-> 当前 `main`：最新文档提交（包含本 HANDOFF 与 README 链接，以 `git log` 为准）
-> 当前 tag：`v1.1.2`（annotated tag object `75087ca3f7ab146ffc272fca8db1b71c0a4199b4`，指向 `4ac76ef`）
+> 当前版本：**1.1.3**（2026-10-24 修复 macOS 收起 M 与画布渐变；待 Mac 验收）
+> 1.1.3 代码 commit / tag：`v1.1.3`（哈希以 `git rev-parse v1.1.3` 为准；本地已提交，GitHub 推送待凭据）
+> 上一版 1.1.2：commit `4ac76efd667ba7384821daad57806f8eb14aee28`，tag `v1.1.2`
+> 当前 `main`：最新提交（以 `git log` 为准）
 > 最后更新：2026-10-24
 
 ---
@@ -20,14 +20,16 @@
 - 页面背景仍是纯白/纯黑，没有黑白灰渐变；
 - 用户已经卸载旧版、安装新版，插件管理器显示 **1.1.1**，但视觉没有任何变化。
 
-**最重要的事实：插件管理器显示的版本号是磁盘上的包版本，不等于当前页面已经加载的新 Client bundle。** DSH 不会热替换已运行的 Client。上一次交接时判断用户很可能仍在运行旧 1.1.0 Client；1.1.2 已针对此问题增加运行时构建标记和 macOS 原生回退，但**尚未在 Mac 上得到用户确认**。
+**最重要的事实：插件管理器显示的版本号是磁盘上的包版本，不等于当前页面已经加载的新 Client bundle。** DSH 不会热替换已运行的 Client。
+
+**2026-10-24 实测更新：旧 Client 假设已被推翻。** 本会话用无头 Chrome + CDP 对运行中的 Host 做了实证：运行页确实加载 **1.1.2**（Console 捕获唯一一条 `[DSH·Mine] client build 1.1.2`，boot graph 中也包含 1.1.2 的 rev）。白底玻璃 M、蓝点、纯白/纯黑背景都来自 1.1.2 自身的 CSS/选择器缺陷，已在 **1.1.3** 修复（见 §4.4），等待 Mac 端最终验收。
 
 你的任务不是再重复“请重启”，而是：
 
 1. 先让用户确认当前页面到底加载了哪个 Client（Console 标记 / 蓝点 / 版本）；
 2. 如果仍是旧 Client，彻底清理旧 bundle 并 `Cmd+Q` 完全退出；
-3. 如果已经是 1.1.2 但 UI 仍错，按第 7 节的诊断树定位是「Mark 没进 slot」「CSS 被覆盖」「Mac 原生壳不透明」还是「pane 不存在」；
-4. 修复后推送 GitHub，并让用户在 Mac 上截图验收。
+3. 如果已经是 1.1.3 但 UI 仍错，按第 7 节的诊断树定位是「Mark 没进 slot」「CSS 被覆盖」「Mac 原生壳不透明」还是「pane 不存在」；
+4. 1.1.3 已完成修复、本地提交并安装到 profile；下一步是推送 GitHub，并让用户在 Mac 上截图验收。
 
 不要假设 Windows 上的效果等于 macOS；不要只改 CSS 就宣布完成。
 
@@ -149,12 +151,9 @@
 ```text
 仓库：https://github.com/Dechuan0629/dsh-mine-workbench-cdc
 分支：main
-1.1.2 代码 commit：4ac76efd667ba7384821daad57806f8eb14aee28
-当前 main：最新文档提交（HANDOFF + README 链接，以 `git log` 为准）
-最近提交（代码）：
-  4ac76ef docs: explain stale mac client and full quit
-  3c1c2f3 fix: make mac M native and canvas independent of wheel runtime
-tag：v1.1.2 -> 4ac76ef
+当前版本：1.1.3（本地已提交并打 tag；GitHub 推送待用户凭据）
+上一版：v1.1.2 -> 4ac76ef（commit 4ac76efd667ba7384821daad57806f8eb14aee28）
+当前 tag：v1.1.3（哈希以 `git rev-parse v1.1.3` 为准）
 ```
 
 精确加载发布代码：
@@ -162,9 +161,9 @@ tag：v1.1.2 -> 4ac76ef
 ```bash
 git clone https://github.com/Dechuan0629/dsh-mine-workbench-cdc.git
 cd dsh-mine-workbench-cdc
-git checkout v1.1.2
+git checkout v1.1.3
 git rev-parse HEAD
-# 应为 4ac76efd667ba7384821daad57806f8eb14aee28
+# 以 v1.1.3 tag 为准（对应 1.1.3 修复提交）
 ```
 
 如果要读取本交接文档的最新版本，使用 `main`：
@@ -199,7 +198,7 @@ git rev-parse HEAD
 ```json
 {
   "name": "dsh-mine-workbench",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "private": false,
   "license": "MIT",
   "type": "module",
@@ -213,6 +212,8 @@ git rev-parse HEAD
 ---
 
 ## 3. 当前未解决的问题（最重要）
+
+> **2026-10-24 更新：本节是 1.1.2 及之前的历史现象记录。** 本会话已用 CDP 对运行页实测：页面确实是 1.1.2（Console 有 `[DSH·Mine] client build 1.1.2`），“仍在跑旧 Client”假设不成立；真实根因与 1.1.3 修复见 **§4.4**。1.1.3 尚待 Mac 截图验收。
 
 ### 现象
 
@@ -277,6 +278,8 @@ function Mark({ size = 24, className }) {
 
 ### 4.2 macOS 原生壳回退
 
+> 1.1.3 已用“透明 + 石墨 M（data-URI mask）”回退替换本节原本的白玻璃皮肤，并删除 hub 内伪元素文本 M；本节保留 1.1.2 历史实现。
+
 在 `client.js` 的 CSS 末尾（约 2945 行起）增加了不依赖 `data-mine-sidebar` 的规则：
 
 ```css
@@ -324,11 +327,35 @@ html[data-platform="darwin"] button[aria-label*="边栏"]:not([data-mw-drag-hand
 `apply(ctx)` 启动时：
 
 ```js
-document.documentElement.dataset.mwBuild = '1.1.2';
-console.info('[DSH·Mine] client build 1.1.2');
+document.documentElement.dataset.mwBuild = '1.1.3';
+console.info('[DSH·Mine] client build 1.1.3');
 ```
 
 如果 Console 没有这行，**100% 是旧 Client 或模块没加载**，不要继续调 CSS。
+
+### 4.4 1.1.3（当前版本）：Mac 实测结论与修复
+
+本次会话直接在用户的 Mac 上做了运行时实证（DSH `0.2.1-rc.2`，桌面 GUI `http://127.0.0.1:63034`）：从 Chromium Cookie 库取得 Host 的认证 Cookie，用无头 Chrome + CDP 复用同一 Host 的 boot graph 重新加载页面，并采集 Console、DOM、计算样式与截图。
+
+**Console 门禁已确认**：运行页确实加载了 1.1.2 —— CDP 捕获到唯一一条 `console.info('[DSH·Mine] client build 1.1.2')`，且 `document.documentElement.dataset.mwBuild === "1.1.2"`；Electron/Host 启动时间（22:50:44）晚于 1.1.2 磁盘包写入时间（22:50:26）。因此“页面仍在跑旧 Client”的假设**不成立**，问题来自 1.1.2 自身的 CSS/选择器缺陷。
+
+**根因（全部已定位到具体元素/规则）**：
+
+1. **收起 M 仍是白玻璃方块**：1.1.2 给原生 `button[class*="toggle"]` 套了 54×54 玻璃圆（`linear-gradient(145deg,#fff 44%,transparent 52%)` + `backdrop-filter: blur(28px)` + 深色阴影），并用 `::before { content:'M' }` 合成文本 M；同时原生 `railMark` 中的真实 SVG Mark 也在渲染 → 双 M 叠加，字形错乱。
+2. **右上蓝点**：来自 DSH 原生 `sidebar.toggle.badge` 的 `DesktopUpdateBadge`（brand-blue，仅收起态渲染）；1.1.2 的隐藏规则写成 `button[aria-label*="边栏"]:not([data-mw-drag-handle]) [class*="badge"]`，而 hub 恰好带 `data-mw-drag-handle`，所以蓝点从未被隐藏。
+3. **背景纯白 / 纯黑**：macOS 原生壳的 `_6Qf49G_centerCol`、会话 `ST7X_W_root` 等层是不透明白色，盖住 body 渐变；暗色下 1.1.2 的暗色选择器写成 `[data-dsh-theme="dark"]`，而 DSH 原生暗色标记实际是 `body[data-ds-dark-theme]`，导致暗色画布规则从未命中。
+4. **Mac 顶部条白色玻璃方块**：`[data-slot="shell.leading"]` 里的原生「打开侧边栏」按钮被 1.1.2 的 Mac fallback 白玻璃皮肤套皮。
+
+**1.1.3 已做修改（`client.js`）**：
+
+- 收起 hub：透明背景、无边框/阴影/backdrop，仅在 hover 时出现半透明玻璃；隐藏 `::before` 文本 M 与原生 panelIcon，显示真实 `.mw-mark` SVG（46px 盒，石墨色）。
+- 隐藏收起 hub 内的 `[data-slot="sidebar.toggle.badge"]` 与 `[class*="badge"]`，去掉右上蓝点。
+- 暗色画布选择器改为 DSH 真实属性：`html[data-mine-sidebar="on"] body[data-ds-dark-theme]`、`html[data-platform="darwin"] body[data-ds-dark-theme]`（含 `#root`）。
+- 新增 darwin 画布透出规则：`[data-pane="conversation"]` 及其 `[class*="_root"]` 后代 `background-color: transparent !important`，让 body/#root 的渐变在会话视图可见；只动画布层，消息/卡片表面不动。
+- Mac 原生展开按钮（`shell.leading` 与 `[data-pane="sidebar"]` 内）删除白玻璃皮肤，改为透明 + 居中石墨 M（data-URI SVG mask，path 同 1.1.2），并隐藏原生 svg 与 badge。
+- 构建标记更新为 `1.1.3`（`dataset.mwBuild` 与 Console 行）。
+
+**验证状态**：以上改动已在“无头 Chrome + 真实 Host boot graph + 模拟 `data-platform="darwin"` + 替换 `style[data-mine-workbench-style]` 为 1.1.3 CSS”的条件下逐项验证：收起 hub 为透明石墨 M（无玻璃、无蓝点）、顶部条按钮变原生 ghost、light 全页黑白灰渐变、dark 黑灰渐变、会话视图无白色遮挡层、无 console 异常。**尚未在 Mac 上做真实 Electron 重启验收**，因此对外仍称“已修复，待 Mac 验收”。
 
 ---
 
@@ -374,7 +401,7 @@ dsh-mine-workbench-cdc/
 - 轮盘：`installWheelSidebar(ctx, actions)`
 - 状态同步：`const sync = () =>`
 - 入口：`function apply(ctx)`
-- 构建标记：`client build 1.1.2`
+- 构建标记：`client build 1.1.3`
 
 ### 主要 UI 能力
 
@@ -436,7 +463,7 @@ DSH 插件不是“一个 JS 文件”，而是四层协作：
 
 ### 5A.3 `client.js` 分层索引
 
-> 行号基于 1.1.2（4300 行）；编辑后会移动，优先用表中的 `grep` 锚点。
+> 行号基于 1.1.2（4300 行）；1.1.3 修改了 CSS/apply 区域，行号略有移动，优先用表中的 `grep` 锚点。
 
 | 行区间 | 内容 | 关键符号 / 锚点 |
 |---|---|---|
@@ -632,9 +659,9 @@ pointerdown on M (data-mw-drag-handle="hub")
 在 Mac 的 DevTools Console：
 
 ```js
-// 1. 运行时是否真的是 1.1.2
+// 1. 运行时是否真的是 1.1.3
 document.documentElement.dataset.mwBuild
-// 期望 "1.1.2"
+// 期望 "1.1.3"
 
 // 2. 插件是否接管了侧栏
 document.documentElement.dataset.mineSidebar
@@ -651,7 +678,7 @@ document.querySelector('[data-pane="sidebar"] button[class*="toggle"]')?.outerHT
 getComputedStyle(document.body).backgroundImage
 ```
 
-如果 `data-mw-build` 不是 1.1.2，先解决“旧 Client 仍在运行”，不要改 CSS。
+如果 `data-mw-build` 不是 1.1.3，先解决“旧 Client 仍在运行”，不要改 CSS。
 如果 build 正确但 `data-mine-sidebar` 缺失，查 `installWheelSidebar` 是否在 `apply` 后抛错。
 如果属性都有但背景仍白，查 `body` 是否被更深的 `#root`/wrapper 盖住（见 §7 情况 C）。
 
@@ -664,7 +691,7 @@ getComputedStyle(document.body).backgroundImage
 ```bash
 git clone https://github.com/Dechuan0629/dsh-mine-workbench-cdc.git
 cd dsh-mine-workbench-cdc
-git checkout v1.1.2
+git checkout v1.1.3
 ```
 
 ### 6.2 清理旧 bundle（关键）
@@ -690,7 +717,7 @@ plugin_manager install_bundle target="/Users/<you>/dsh-mine-workbench-cdc"
 安装后应显示：
 
 - bundle：`dsh-mine-workbench`
-- version：`1.1.2`
+- version：`1.1.3`
 
 ### 6.4 完全退出再打开
 
@@ -707,14 +734,14 @@ macOS 上：
 打开 DevTools Console（`Cmd+Option+I`），搜索：
 
 ```text
-[DSH·Mine] client build 1.1.2
+[DSH·Mine] client build 1.1.3
 ```
 
 并检查：
 
 ```js
 document.documentElement.dataset.mwBuild
-// "1.1.2"
+// "1.1.3"
 document.documentElement.dataset.mineSidebar
 // "on"
 document.documentElement.dataset.mineSidebarCollapsed
@@ -723,20 +750,20 @@ document.documentElement.dataset.mwWheelOpen
 // "false"（默认收起时）
 ```
 
-如果 `mwBuild` 不是 `1.1.2`，不要再研究 M/CSS；先解决 **旧 Client / 旧 bundle / 未完全重启**。
+如果 `mwBuild` 不是 `1.1.3`，不要再研究 M/CSS；先解决 **旧 Client / 旧 bundle / 未完全重启**。
 
 ---
 
-## 7. 诊断树：如果 1.1.2 仍然不对
+## 7. 诊断树：如果 1.1.3 仍然不对
 
-### 情况 A：Console 没有 `[DSH·Mine] client build 1.1.2`
+### 情况 A：Console 没有 `[DSH·Mine] client build 1.1.3`
 
-优先级最高。说明当前页面没有加载 1.1.2。
+优先级最高。说明当前页面没有加载 1.1.3。
 
 依次检查：
 
 1. 插件列表是否仍有旧 `@local/dsh-mine-workbench`；
-2. 插件管理器显示的 `dsh-mine-workbench` 版本是否真是 1.1.2；
+2. 插件管理器显示的 `dsh-mine-workbench` 版本是否真是 1.1.3；
 3. 是否只重载窗口，没有 `Cmd+Q`；
 4. 在 DSH 插件列表里把 `dsh-mine-workbench` 也删除，重新安装；
 5. 再完全退出、重开。
@@ -749,7 +776,7 @@ document.documentElement.dataset.mwWheelOpen
 
 ### 情况 B：Console 有标记，但 M 仍是白底方块 + 蓝点
 
-这说明 1.1.2 Client 已加载，但 **M 不是我们的 `Mark`**，或 CSS 被覆盖。
+这说明 1.1.3 Client 已加载，但 **M 不是我们的 `Mark`**，或 CSS 被覆盖。
 
 检查 slot 占用：
 
@@ -781,7 +808,7 @@ getComputedStyle(document.querySelector('.mw-mark')).color
 
 如果 `.mw-mark` 不存在，说明我们的 Mark 没进 slot；需要检查其他插件或 slot 优先级。
 
-**注意**：Mac collapsed 的原生 toggle 是 `button[aria-label="打开侧边栏"]`，内部可能有原生 `sidebar.toggle.badge`。1.1.2 已尝试隐藏 badge；若蓝点是另一个兄弟节点，按实际 DOM 精确隐藏，不要无差别隐藏所有 badge。
+**注意**：Mac collapsed 的原生 toggle 是 `button[aria-label="打开侧边栏"]`，内部可能有原生 `sidebar.toggle.badge`。1.1.3 已确认真实蓝点来源就是原生 `DesktopUpdateBadge`（brand-blue，收起态渲染），并通过隐藏 hub 内 `[data-slot="sidebar.toggle.badge"]` 与 `[class*="badge"]` 解决。
 
 ### 情况 C：Console 有标记，M 正确，但背景仍是纯白/纯黑
 
@@ -844,9 +871,9 @@ document.documentElement.dataset.mineSidebarCollapsed
 
 ### 情况 E：M 位置/颜色正确，但字体仍“错乱”
 
-1.1.2 已改为填充 path，不再依赖字体。如果仍然错乱：
+1.1.2 起改为填充 path，不再依赖字体；1.1.3 起收起 hub 直接显示该 SVG。如果仍然错乱：
 
-- 确认 `.mw-mark path` 的 `d` 是 1.1.2 的 `M16 46V18...`；
+- 确认 `.mw-mark path` 的 `d` 是 `M16 46V18...`（1.1.2/1.1.3 相同）；
 - 检查是否有旧 CSS `stroke` 规则叠加；
 - 检查 SVG 是否被外部 `transform: scale()` 拉伸；
 - 在 Console 中读取 `document.querySelector('.mw-mark')?.outerHTML`，确认不是旧 DOM。
@@ -857,10 +884,12 @@ document.documentElement.dataset.mineSidebarCollapsed
 
 在 Mac 上，只有以下全部通过才算完成：
 
-- [ ] 插件管理器显示 `dsh-mine-workbench` **1.1.2**；
+- [ ] 插件管理器显示 `dsh-mine-workbench` **1.1.3**；
 - [ ] 插件列表没有 `@local/dsh-mine-workbench`；
-- [ ] Console 有 `[DSH·Mine] client build 1.1.2`；
+- [ ] Console 有 `[DSH·Mine] client build 1.1.3`；
 - [ ] 收起 M 是干净的石墨色实心 M，**无白底方块、无蓝点、无字体错乱**；
+- [ ] Mac 顶部条原生「打开侧边栏」按钮不是白玻璃方块（原生 ghost 或石墨 M）；
+- [ ] 悬停收起 M 时出现半透明玻璃底（仍可拖动）；
 - [ ] light 模式页面是黑白灰渐变，不是纯白；
 - [ ] dark 模式页面是黑灰渐变，不是纯黑；
 - [ ] 悬停 M 展开轮盘，移出收起；
@@ -909,7 +938,7 @@ Windows 回归（可选但建议）：
 ### `package.json`
 
 - `name`: `dsh-mine-workbench`
-- `version`: `1.1.2`
+- `version`: `1.1.3`
 - `private`: `false`
 - `license`: `MIT`
 - `type`: `module`
@@ -968,7 +997,7 @@ window.__ModuleLoader__.load({
 
 - locale 注册；
 - 注入 `<style data-mine-workbench-style>`；
-- 设置 build 标记 `document.documentElement.dataset.mwBuild = '1.1.2'` 并打印 `[DSH·Mine] client build 1.1.2`；
+- 设置 build 标记 `document.documentElement.dataset.mwBuild = '1.1.3'` 并打印 `[DSH·Mine] client build 1.1.3`；
 - 定义 actions；
 - `ctx.effect(() => installWheelSidebar(ctx, actions), ...)`；
 - 注册 `sidebar.brand.mark` / `sidebar.brand.name`（`priority: -1`，覆盖原生品牌）/ `conversation.hero.brand.mark` / `sidebar.panellist` / `main` / `settings.section`；
@@ -984,21 +1013,21 @@ window.__ModuleLoader__.load({
 4. **Windows 与 macOS 结构不同**：Windows 收起时 sidebar 还在，Mac 可能整个隐藏；不要只用 `[data-pane="sidebar"]` 判断。
 5. **Mac 原生壳不透明**：仅设置 `body` 背景可能被 `#root` 或更深层 wrapper 盖住。
 6. **原生 badge**：Mac 原生 `sidebar.toggle.badge` 可能产生蓝点，不一定是我们的 Mark 圆点。
-7. **Tooltip**：原生 Tooltip 是 portal，只删 `title` 不够；1.1.2 仍有 CSS 抑制，但 Mac 需要实际验证。
+7. **Tooltip**：原生 Tooltip 是 portal，只删 `title` 不够；1.1.3 仍有 CSS 抑制，但 Mac 需要实际验证。
 8. **代理**：该环境曾出现 `127.0.0.1:7890` 代理时通时断；git push 失败时可尝试直连或重试，不要改仓库内容。
 
 ---
 
 ## 12. 交接后的第一批动作（按顺序）
 
-1. `git clone` / `git pull`，确认 HEAD `4ac76ef`。
+1. `git clone` / `git pull`，确认当前 tag `v1.1.3`（上一版为 `4ac76ef` / tag `v1.1.2`）。
 2. 阅读 `package.json`、`cordis.patch.yml`、`client.js` 的 `Mark` / Mac fallback / `apply`。
-3. 让用户在 Mac 上安装 1.1.2，并 **Cmd+Q 完全退出**。
+3. 让用户在 Mac 上安装 1.1.3，并 **Cmd+Q 完全退出**。
 4. 让用户提供：
    - M 的截图（重点看蓝点/白底）；
    - Console 中 `[DSH·Mine] client build ...`；
    - 插件列表中所有 `mine-workbench` 条目。
-5. 如果标记是 1.1.2 但视觉仍错，按第 7 节 B/C/D 分支收集 DOM/计算样式，不要盲改。
+5. 如果标记是 1.1.3 但视觉仍错，按第 7 节 B/C/D 分支收集 DOM/计算样式，不要盲改。
 6. 修复后：
    ```bash
    node --check client.js
@@ -1014,7 +1043,7 @@ window.__ModuleLoader__.load({
 
 ## 13. 给用户的最短沟通模板
 
-> 你的截图说明当前页面仍在运行旧 Client（1.1.1/1.1.2 已经移除蓝点，但截图蓝点还在）。插件管理器的版本号不等于页面已加载的 Client。请先删除旧 `@local/dsh-mine-workbench`，安装 1.1.2，然后 **Cmd+Q 完全退出 DSH 再打开**。打开 Console 应看到 `[DSH·Mine] client build 1.1.2`；如果仍看不到，请把插件列表和 Console 截图发我。
+> 本机已实测定位：你的页面确实加载了 1.1.2（Console 有 `[DSH·Mine] client build 1.1.2`），此前“旧 Client 未重启”的判断不成立。问题来自 1.1.2 自身：收起 M 的玻璃底与伪元素文本 M 叠加、原生 DesktopUpdateBadge 蓝点未被隐藏、macOS 原生白色容器遮住画布渐变、暗色选择器写错属性名。这些已在 **1.1.3** 修复。请安装 1.1.3 后 **Cmd+Q 完全退出 DSH 再打开**，Console 应看到 `[DSH·Mine] client build 1.1.3`；然后确认：收起 M 是干净石墨 M（无白底方块、无蓝点），light 为黑白灰渐变、dark 为黑灰渐变，顶部条原生展开按钮不再是白玻璃方块。若仍有问题，请把 Console 截图和收起态截图发我。
 
 ---
 

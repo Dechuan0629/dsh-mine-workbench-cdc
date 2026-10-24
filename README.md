@@ -54,11 +54,11 @@ plugin_manager install_bundle target=/absolute/path/to/dsh-mine-workbench
 
 安装或更新 Client bundle 后，**完全退出 DSH 再打开**（macOS 用 `Cmd+Q`，确认 Dock/菜单栏进程已退出），不要只刷新旧页面或只重载窗口。旧页面的 boot graph 仍指向旧 revision，刷新可能得到 404；重启后 DSH 会用新的 boot graph 加载 `client.js`。
 
-如果插件管理器已显示 `1.1.2`，但 M 仍是**白底圆角方块 + 右上蓝点**，说明运行中的页面还是旧 Client（1.1.1 已移除蓝点）。请依次检查：
+如果插件管理器已显示 `1.1.3`，但 M 仍是**白底圆角方块 + 右上蓝点**或背景仍纯白，说明运行中的页面还是旧 Client。请依次检查：
 
 1. 插件列表里是否还残留 `@local/dsh-mine-workbench` 或旧 bundle；有就删除，只保留 `dsh-mine-workbench`。
 2. `Cmd+Q` 完全退出，再重新打开 DSH。
-3. 打开开发者工具 Console（`Cmd+Option+I`），应看到 `[DSH·Mine] client build 1.1.2`；看不到就仍是旧 Client。
+3. 打开开发者工具 Console（`Cmd+Option+I`），应看到 `[DSH·Mine] client build 1.1.3`；看不到就仍是旧 Client。
 
 重启后：
 
@@ -139,11 +139,12 @@ npm run check
 
 ## 迁移交接
 
-如果要把本项目交给另一个 AI 继续维护，请先阅读 [HANDOFF.md](HANDOFF.md)：其中包含当前 Mac 未解决问题、1.1.2 的改动、精确安装步骤、诊断树和验收清单。
+如果要把本项目交给另一个 AI 继续维护，请先阅读 [HANDOFF.md](HANDOFF.md)：其中包含 macOS 实测结论、1.1.3 的修复记录、精确安装步骤、诊断树和验收清单。
 
 ## 版本记录
 
-- **1.1.2**：M 改为纯几何填充字形，彻底移除渐变玻璃底与右上蓝点；macOS 原生壳增加不依赖轮盘运行时的黑白灰画布回退，并直接为原生展开按钮套用圆角玻璃皮肤。**安装后请 Cmd+Q 完全退出再打开**；蓝点仍在说明页面仍运行旧 1.1.1 之前的 Client。
+- **1.1.3**：修复 1.1.2 在 macOS 上实测发现的缺陷：收起态 M 去掉玻璃方块与伪元素文本 M，改为透明底 + 真实 SVG 石墨 M，并隐藏原生 `DesktopUpdateBadge` 蓝点；macOS 会话视图的原生白色容器改为透明，让黑白灰渐变画布真正可见；暗色画布选择器改为 DSH 真实的 `body[data-ds-dark-theme]`；macOS 原生「打开侧边栏」按钮不再套白玻璃皮肤。**安装后仍需 Cmd+Q 完全退出再打开**。
+- **1.1.2**：M 改为纯几何填充字形，移除渐变玻璃底与右上蓝点；macOS 原生壳增加不依赖轮盘运行时的黑白灰画布回退，并直接为原生展开按钮套用圆角玻璃皮肤。（该版本在部分 Mac 上仍显示白底玻璃 M/纯白背景，已由 1.1.3 修复。）
 - **1.1.1**：移除品牌蓝点、调整 M 轮廓；补回 light/dark 全局黑白灰渐变画布（此版本在部分 Mac 上未真正进入页面，仍显示旧 Client）。
 - **1.1.0**：首次公开发布；macOS 玻璃侧栏、M 轮盘、动作坞、命令搜索、专注计时和 Agent 预设。
 
