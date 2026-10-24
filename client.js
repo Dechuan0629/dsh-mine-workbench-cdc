@@ -690,9 +690,6 @@ window.__ModuleLoader__.load({
     }
 
     function Mark({ size = 24, className }) {
-      const rawId = React.useId ? React.useId() : 'mw';
-      const id = String(rawId).replace(/[^a-zA-Z0-9_-]/g, '');
-      const gradientId = `mw-mark-glass-${id}`;
       return h('svg', {
         className: ['mw-mark', className].filter(Boolean).join(' '),
         width: size,
@@ -701,55 +698,12 @@ window.__ModuleLoader__.load({
         fill: 'none',
         'aria-hidden': 'true',
         focusable: 'false',
-      }, [
-        h('defs', { key: 'defs' }, [
-          h('linearGradient', { key: 'g', id: gradientId, x1: '0%', y1: '0%', x2: '100%', y2: '100%' }, [
-            h('stop', { key: 's1', offset: '0%', stopColor: 'currentColor', stopOpacity: '0.16' }),
-            h('stop', { key: 's2', offset: '100%', stopColor: 'currentColor', stopOpacity: '0.05' }),
-          ]),
-        ]),
-        h('rect', {
-          key: 'glass',
-          x: 2.5,
-          y: 2.5,
-          width: 59,
-          height: 59,
-          rx: 18,
-          fill: `url(#${gradientId})`,
-          stroke: 'currentColor',
-          strokeOpacity: '0.24',
-          strokeWidth: 1.4,
-        }),
-        h('rect', {
-          key: 'line',
-          x: 6.5,
-          y: 6.5,
-          width: 51,
-          height: 51,
-          rx: 14.5,
-          stroke: 'currentColor',
-          strokeOpacity: '0.08',
-          strokeWidth: 1,
-        }),
-        h('path', {
-          key: 'm',
-          d: 'M17 45V20l15 15 15-15v25',
-          stroke: 'currentColor',
-          strokeOpacity: '0.92',
-          strokeWidth: 4.5,
-          strokeLinecap: 'round',
-          strokeLinejoin: 'round',
-          shapeRendering: 'geometricPrecision',
-        }),
-        h('circle', {
-          key: 'dot',
-          cx: 47,
-          cy: 17,
-          r: 2.3,
-          fill: 'currentColor',
-          opacity: '0.42',
-        }),
-      ]);
+      }, h('path', {
+        key: 'm',
+        d: 'M16 46V18h7l9 11.5L41 18h7v28h-6.2V29.4L32 41.6 22.2 29.4V46Z',
+        fill: 'currentColor',
+        shapeRendering: 'geometricPrecision',
+      }));
     }
 
     function PanelIcon({ size = 16, active }) {
@@ -2947,6 +2901,60 @@ html[data-mine-sidebar="on"] #root > div {
   background-color: transparent !important;
 }
 
+/* Native macOS shell fallback. The Mac desktop sidebar hides itself when
+   collapsed, so the wheel's data attributes may not exist on first paint.
+   Paint the canvas and the native expand control by platform alone. */
+html[data-platform="darwin"] body,
+html[data-platform="darwin"] #root {
+  background-color: #f2f2f4 !important;
+  background-image:
+    radial-gradient(1100px 760px at 12% -8%, #ffffff 0%, rgba(255, 255, 255, 0) 58%),
+    radial-gradient(880px 640px at 96% 105%, rgba(255, 255, 255, .72) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(145deg, #fafafa 0%, #f0f0f2 46%, #e6e6e9 100%) !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+}
+html[data-platform="darwin"][data-dsh-theme="dark"] body,
+html[data-platform="darwin"][data-dsh-theme="dark"] #root {
+  background-color: #0b0b0d !important;
+  background-image:
+    radial-gradient(1000px 700px at 15% -10%, rgba(255, 255, 255, .12) 0%, rgba(255, 255, 255, 0) 60%),
+    radial-gradient(850px 600px at 90% 105%, rgba(255, 255, 255, .06) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(145deg, #19191c 0%, #111114 48%, #08080a 100%) !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+}
+html[data-platform="darwin"] #root > div,
+html[data-platform="darwin"] body > div {
+  background-color: transparent !important;
+}
+html[data-platform="darwin"] button[aria-label*="边栏"]:not([data-mw-drag-handle]),
+html[data-platform="darwin"] button[aria-label*="sidebar" i]:not([data-mw-drag-handle]) {
+  background: linear-gradient(145deg, rgba(255, 255, 255, .96), rgba(235, 235, 240, .84)) !important;
+  border: 1px solid rgba(255, 255, 255, .72) !important;
+  border-radius: 15px !important;
+  color: #1d1d1f !important;
+  box-shadow:
+    0 10px 26px rgba(15, 23, 42, .13),
+    0 1px 3px rgba(15, 23, 42, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .9) !important;
+}
+html[data-platform="darwin"][data-dsh-theme="dark"] button[aria-label*="边栏"]:not([data-mw-drag-handle]),
+html[data-platform="darwin"][data-dsh-theme="dark"] button[aria-label*="sidebar" i]:not([data-mw-drag-handle]) {
+  background: linear-gradient(145deg, rgba(58, 58, 62, .96), rgba(28, 28, 31, .88)) !important;
+  border-color: rgba(255, 255, 255, .16) !important;
+  color: #f5f5f7 !important;
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .38),
+    0 1px 3px rgba(0, 0, 0, .32),
+    inset 0 1px 0 rgba(255, 255, 255, .18) !important;
+}
+html[data-platform="darwin"] button[aria-label*="边栏"]:not([data-mw-drag-handle]) [class*="badge"],
+html[data-platform="darwin"] button[aria-label*="边栏"]:not([data-mw-drag-handle]) [data-dsh-badge],
+html[data-platform="darwin"] button[aria-label*="sidebar" i]:not([data-mw-drag-handle]) [class*="badge"] {
+  display: none !important;
+}
+
 @media (max-height: 720px) {
   .mw-action-dock { top: calc(var(--mw-wheel-cy, 50vh) + 240px); }
   .mw-wheel-metrics { top: calc(var(--mw-wheel-cy, 50vh) + 142px); }
@@ -4129,6 +4137,10 @@ html[data-mine-sidebar="on"] #root > div {
       }
 
       prefs = loadPrefs();
+      try {
+        document.documentElement.dataset.mwBuild = '1.1.2';
+        console.info('[DSH·Mine] client build 1.1.2');
+      } catch {}
 
       ctx.effect(() => {
         if (typeof document === 'undefined' || document.head === null) return () => {};
